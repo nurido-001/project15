@@ -1,10 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\WisataController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\WisataController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\GrafikController;
 
@@ -14,21 +13,31 @@ use App\Http\Controllers\GrafikController;
 |--------------------------------------------------------------------------
 */
 
+// Halaman utama (welcome page)
 Route::get('/', function () {
     return view('welcome');
 });
 
-// otomatis generate route login/register/logout
+// Otomatis generate route login/register/logout
 Auth::routes();
 
-// Dashboard / Home
+// Dashboard / Home (setelah login)
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+
+// Dashboard Admin (statistik ringkasan)
+Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+
+// Halaman Dashboard Cards (contoh UI dengan cards & masonry)
+Route::get('/dashboard/cards', function () {
+    return view('dashboard.index');
+})->name('dashboard.cards');
 
 // CRUD untuk Wisata
 Route::resource('wisata', WisataController::class);
 
 // Menu Sidebar Tambahan
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
-Route::get('/grafik-pengguna', [GrafikController::class, 'index'])->name('grafik.index');
+Route::prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+    Route::get('/grafik-pengguna', [GrafikController::class, 'index'])->name('grafik.index');
+});
