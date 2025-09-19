@@ -12,8 +12,8 @@ class WisataController extends Controller
      */
     public function index()
     {
-        $wisatas = Wisata::all(); // ambil semua data wisata
-        return view('wisata.index', compact('wisatas'));
+        $wisata = Wisata::all(); // ambil semua data wisata
+        return view('wisata.index', compact('wisata'));
     }
 
     /**
@@ -45,23 +45,23 @@ class WisataController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Wisata $wisatum)
+    public function show(Wisata $wisata)
     {
-        return view('wisata.show', compact('wisatum'));
+        return view('wisata.show', compact('wisata'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Wisata $wisatum)
+    public function edit(Wisata $wisata)
     {
-        return view('wisata.edit', compact('wisatum'));
+        return view('wisata.edit', compact('wisata'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Wisata $wisatum)
+    public function update(Request $request, Wisata $wisata)
     {
         $request->validate([
             'nama' => 'required',
@@ -69,7 +69,7 @@ class WisataController extends Controller
             'deskripsi' => 'required',
         ]);
 
-        $wisatum->update($request->all());
+        $wisata->update($request->all());
 
         return redirect()->route('wisata.index')->with('success', 'Data berhasil diperbarui!');
     }
@@ -77,9 +77,9 @@ class WisataController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Wisata $wisatum)
+    public function destroy(Wisata $wisata)
     {
-        $wisatum->delete();
+        $wisata->delete();
 
         return redirect()->route('wisata.index')->with('success', 'Data berhasil dihapus!');
     }

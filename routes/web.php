@@ -18,26 +18,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Otomatis generate route login/register/logout
+// Autentikasi (hanya jika pakai laravel/ui)
 Auth::routes();
 
-// Dashboard / Home (setelah login)
+// Dashboard setelah login
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// Dashboard Admin (statistik ringkasan)
+// Dashboard Admin
 Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-
-// Halaman Dashboard Cards (contoh UI dengan cards & masonry)
-Route::get('/dashboard/cards', function () {
-    return view('dashboard.index');
-})->name('dashboard.cards');
 
 // CRUD untuk Wisata
 Route::resource('wisata', WisataController::class);
 
-// Menu Sidebar Tambahan
+// Menu Admin (grouping)
 Route::prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
-    Route::get('/grafik-pengguna', [GrafikController::class, 'index'])->name('grafik.index');
+    Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
 });

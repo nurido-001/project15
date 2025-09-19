@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Administrator;
 use App\Models\Pengguna;
 use App\Models\TempatWisata;
@@ -19,7 +20,7 @@ class AdminController extends Controller
         $totalPenilaian    = Penilaian::count();
         $totalGrafik       = GrafikPengguna::count();
 
-        // Data terbaru
+        // Data terbaru (limit 5)
         $latestUsers   = Pengguna::latest()->take(5)->get();
         $latestWisata  = TempatWisata::latest()->take(5)->get();
         $latestReview  = Penilaian::latest()->take(5)->get();
