@@ -15,24 +15,24 @@ use App\Http\Controllers\GrafikController;
 
 // Halaman utama (welcome page)
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
-// Autentikasi (hanya jika pakai laravel/ui)
+// Autentikasi (jika pakai laravel/ui)
 Auth::routes();
 
-// Dashboard setelah login
+// Dashboard user setelah login
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// Dashboard Admin
-Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/login', [LoginController::class, 'login']);
 
 // CRUD untuk Wisata
 Route::resource('wisata', WisataController::class);
 
-// Menu Admin (grouping)
+// Menu Admin (semua dalam prefix /admin)
 Route::prefix('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/', [AdminController::class, 'index'])->name('admin.index'); // Dashboard admin
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
     Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
 });
