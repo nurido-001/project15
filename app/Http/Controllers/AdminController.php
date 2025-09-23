@@ -3,34 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Administrator;
-use App\Models\Pengguna;
-use App\Models\TempatWisata;
+use App\Models\User;
+use App\Models\Wisata;
 use App\Models\Penilaian;
-use App\Models\GrafikPengguna;
 
 class AdminController extends Controller
 {
     public function index()
     {
         // Statistik singkat
-        $totalAdmin        = Administrator::count();
-        $totalPengguna     = Pengguna::count();
-        $totalTempatWisata = TempatWisata::count();
-        $totalPenilaian    = Penilaian::count();
-        $totalGrafik       = GrafikPengguna::count();
+        $totalAdmin    = User::where('role', 'admin')->count();
+        $totalPengguna = User::where('role', 'pengguna')->count();
+        $totalWisata   = Wisata::count();
+        $totalPenilaian = Penilaian::count();
 
         // Data terbaru (limit 5)
-        $latestUsers   = Pengguna::latest()->take(5)->get();
-        $latestWisata  = TempatWisata::latest()->take(5)->get();
-        $latestReview  = Penilaian::latest()->take(5)->get();
+        $latestUsers  = User::latest()->take(5)->get();
+        $latestWisata = Wisata::latest()->take(5)->get();
+        $latestReview = Penilaian::latest()->take(5)->get();
 
-        return view('dashboard.index', compact(
+        return view('Admin.index', compact(
             'totalAdmin',
             'totalPengguna',
-            'totalTempatWisata',
+            'totalWisata',
             'totalPenilaian',
-            'totalGrafik',
             'latestUsers',
             'latestWisata',
             'latestReview'

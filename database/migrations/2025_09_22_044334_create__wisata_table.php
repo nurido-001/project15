@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('wisatas', function (Blueprint $table) {
             $table->id();
+            $table->string('nama');
+            $table->string('lokasi');
+            $table->text('deskripsi');
+            $table->decimal('harga_tiket', 10, 2)->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

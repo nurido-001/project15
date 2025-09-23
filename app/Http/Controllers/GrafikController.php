@@ -1,8 +1,13 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="container">
-    <h1>Kelola Admin</h1>
-    <p>Halaman untuk mengelola data admin.</p>
-</div>
-@endsection
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class GrafikController extends Controller
+{
+    public function index()
+    {
+        return view('admin.grafik'); 
+    }
+}
