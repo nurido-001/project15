@@ -8,33 +8,42 @@
         <div class="card-body">
             <p>Halaman ini digunakan untuk mengelola data pengguna yang terdaftar dalam aplikasi.</p>
 
-            {{-- Contoh tombol tambah pengguna --}}
+            {{-- Tombol tambah pengguna --}}
             <a href="{{ route('pengguna.create') }}" class="btn btn-primary mb-3">
                 <i class="ti ti-user-plus"></i> Tambah Pengguna
             </a>
 
-            {{-- Tabel daftar pengguna (sementara statis, nanti bisa diganti dengan data dari controller) --}}
+            {{-- Tabel daftar pengguna --}}
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
                             <th>Email</th>
-                            <th>Aksi</th>
+                            <th width="180">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Pengguna Contoh</td>
-                            <td>user@example.com</td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="#" class="btn btn-sm btn-danger">Hapus</a>
-                            </td>
-                        </tr>
-                        {{-- Looping data pengguna dari database bisa ditambahkan di sini --}}
+                        @forelse($penggunas as $pengguna)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $pengguna->name }}</td>
+                                <td>{{ $pengguna->email }}</td>
+                                <td>
+                                    <a href="{{ route('pengguna.edit', $pengguna->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ route('pengguna.destroy', $pengguna->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus pengguna ini?')">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">Belum ada data pengguna.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

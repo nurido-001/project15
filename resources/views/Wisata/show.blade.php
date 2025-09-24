@@ -10,16 +10,34 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-3">
-                        <img src="{{ asset('img/default/' . $wisata->foto) }}" 
-                             alt="{{ $wisata->nama }}" 
-                             class="img-fluid rounded shadow-sm" 
-                             style="max-height: 400px;">
+                        @if($wisata->foto)
+                            <img src="{{ asset('storage/' . $wisata->foto) }}" 
+                                 alt="{{ $wisata->nama }}" 
+                                 class="img-fluid rounded shadow-sm" 
+                                 style="max-height: 400px; object-fit: cover;">
+                        @else
+                            <img src="{{ asset('default/opo.jpg') }}" 
+                                 alt="Default Image" 
+                                 class="img-fluid rounded shadow-sm" 
+                                 style="max-height: 400px; object-fit: cover;">
+                        @endif
                     </div>
+
                     <h5><strong>Lokasi:</strong> {{ $wisata->lokasi }}</h5>
-                    <p><strong>Harga Tiket:</strong> Rp {{ number_format($wisata->harga_tiket, 0, ',', '.') }}</p>
+
+                    <p>
+                        <strong>Harga Tiket:</strong> 
+                        @if(isset($wisata->harga_tiket))
+                            Rp {{ number_format($wisata->harga_tiket, 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </p>
+
                     <p><strong>Deskripsi:</strong></p>
                     <p class="text-muted">{{ $wisata->deskripsi }}</p>
                 </div>
+
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('wisata.index') }}" class="btn btn-secondary">
                         Kembali
@@ -29,7 +47,8 @@
                         <form action="{{ route('wisata.destroy', $wisata->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus data ini?')">
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Yakin ingin menghapus data ini?')">
                                 Hapus
                             </button>
                         </form>

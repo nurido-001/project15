@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\Administrator;
 
 class AdminUserSeeder extends Seeder
 {
@@ -14,14 +14,13 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         // Cek apakah admin sudah ada
-        $admin = User::where('email', 'admin@wisataku.com')->first();
+        $admin = Administrator::where('email', 'admin@wisataku.com')->first();
 
         if (!$admin) {
-            User::create([
+            Administrator::create([
                 'name' => 'Administrator',
                 'email' => 'admin@wisataku.com',
-                'password' => Hash::make('12345678'), // password bcrypt
-                'role' => 'admin', // opsional kalau tabel user ada kolom role
+                'password' => Hash::make('12345678'), // password terenkripsi bcrypt
             ]);
         }
     }

@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('penggunas', function (Blueprint $table) {
             $table->id();
+            $table->string('name');              // nama pengguna
+            $table->string('email')->unique();   // email unik
+            $table->string('password');          // password (wajib, untuk login)
+
+            // Relasi ke administrator
+            $table->foreignId('administrator_id')
+                  ->nullable()
+                  ->constrained('administrators')
+                  ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

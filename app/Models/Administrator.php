@@ -2,20 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Administrator extends Model
 {
-    protected $fillable = ['name', 'email', 'password'];
+    use HasFactory;
 
-    // 1 Administrator mengelola banyak Pengguna
-    public function pengguna()
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    /**
+     * Relasi: 1 Administrator memiliki banyak Pengguna
+     */
+    public function penggunas()
     {
         return $this->hasMany(Pengguna::class);
     }
 
-    // 1 Administrator menghasilkan banyak GrafikPengguna
-    public function grafik()
+    /**
+     * Relasi: 1 Administrator memiliki banyak GrafikPengguna
+     */
+    public function grafikPenggunas()
     {
         return $this->hasMany(GrafikPengguna::class);
     }

@@ -21,7 +21,7 @@
 
     {{-- Card list wisata --}}
     <div class="row">
-        @forelse ($wisata as $w)
+        @forelse ($wisatas as $w)
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     @if($w->foto)
@@ -81,7 +81,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($wisata as $w)
+                @forelse ($wisatas as $w)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $w->nama }}</td>

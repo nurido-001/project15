@@ -8,32 +8,18 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
 // ==========================
-// Halaman utama (landing page)
+// Halaman utama (sementara arahkan ke daftar wisata)
 // ==========================
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+Route::get('/', [WisataController::class, 'index'])->name('landing');
 
 // ==========================
 // Autentikasi
 // ==========================
-
-// Jika pakai Laravel/UI atau Breeze, aktifkan ini:
-// Auth::routes();
-
-// Jika pakai custom manual:
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Kalau tidak ingin ada register, arahkan saja ke login
 Route::get('/register', function () {
     return redirect()->route('login');
 })->name('register');
@@ -44,15 +30,17 @@ Route::get('/register', function () {
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // ==========================
-// CRUD untuk Wisata
+// Resource Wisata (full CRUD)
 // ==========================
 Route::resource('wisata', WisataController::class);
+// otomatis tersedia route:
+// index, create, store, show, edit, update, destroy
 
 // ==========================
 // Menu Admin (prefix /admin)
 // ==========================
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
-    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+    Route::resource('pengguna', PenggunaController::class);
     Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
 });
