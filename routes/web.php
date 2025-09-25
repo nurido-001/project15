@@ -9,7 +9,7 @@ use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
 
 // ==========================
-// Halaman utama (sementara arahkan ke daftar wisata)
+// Halaman utama (landing page -> daftar wisata)
 // ==========================
 Route::get('/', [WisataController::class, 'index'])->name('landing');
 
@@ -25,16 +25,16 @@ Route::get('/register', function () {
 })->name('register');
 
 // ==========================
-// Dashboard user setelah login
+// Dashboard (user setelah login & admin)
 // ==========================
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+Route::get('/dashboard/cards', [HomeController::class, 'cards'])->name('dashboard.cards');
 
 // ==========================
-// Resource Wisata (full CRUD)
+// Resource Wisata (CRUD lengkap)
 // ==========================
 Route::resource('wisata', WisataController::class);
-// otomatis tersedia route:
-// index, create, store, show, edit, update, destroy
 
 // ==========================
 // Menu Admin (prefix /admin)

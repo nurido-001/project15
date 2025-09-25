@@ -14,6 +14,7 @@ class Wisata extends Model
         'nama',
         'lokasi',
         'deskripsi',
+        'harga_tiket', // ✅ tambahkan ini
         'foto',
     ];
 
