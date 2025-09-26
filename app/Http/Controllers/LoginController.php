@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-   public function showLoginForm()
+    public function showLoginForm()
     {
         return view('auth.login');
     }
@@ -17,13 +17,17 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            if ($user->role === 'admin') {
-                return redirect()->route('Admin.dashboard');
-            } elseif ($user->role === 'user') {
-                return redirect()->route('home');
-            }
+            return redirect()->route('dashboard'); // semua role ke dashboard yang sama
         }
-}
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ])->onlyInput('email');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return redirect()->route('login');
+    }
 }

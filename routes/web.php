@@ -11,7 +11,9 @@ use App\Http\Controllers\LoginController;
 // ==========================
 // Halaman utama (landing page -> daftar wisata)
 // ==========================
-Route::get('/', [WisataController::class, 'index'])->name('landing');
+Route::get('/', function () {
+    return view('landing');
+});
 
 // ==========================
 // Autentikasi
@@ -20,27 +22,28 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// redirect register ke login (disable register)
 Route::get('/register', function () {
     return redirect()->route('login');
 })->name('register');
 
 // ==========================
-// Dashboard (user setelah login & admin)
+// Dashboard (satu untuk semua role)
 // ==========================
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-Route::get('/dashboard/cards', [HomeController::class, 'cards'])->name('dashboard.cards');
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard/cards', [HomeController::class, 'cards'])->name('dashboard.cards');
 
-// ==========================
-// Resource Wisata (CRUD lengkap)
-// ==========================
-Route::resource('wisata', WisataController::class);
+    // Resource Wisata (CRUD lengkap)
+    Route::resource('wisata', WisataController::class);
 
-// ==========================
-// Menu Admin (prefix /admin)
-// ==========================
-Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin.index');
-    Route::resource('pengguna', PenggunaController::class);
-    Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
+    // ==========================
+    // Menu Admin (khusus role admin)
+    // ==========================
+    Route::prefix('admin')->middleware('auth')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::resource('pengguna', PenggunaController::class);
+        Route::get('/grafik', [GrafikController::class, 'index'])->name('admin.grafik');
+    });
 });
