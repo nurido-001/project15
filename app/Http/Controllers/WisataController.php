@@ -13,8 +13,9 @@ class WisataController extends Controller
      */
     public function index()
     {
-        $wisatas = Wisata::latest()->get(); // tampilkan terbaru dulu
-        return view('wisata.index', compact('wisatas'));
+        // Pagination biar tidak berat kalau data banyak
+        $wisatas = Wisata::latest()->paginate(9);
+        return view('Wisata.index', compact('wisatas'));
     }
 
     /**
@@ -22,7 +23,7 @@ class WisataController extends Controller
      */
     public function create()
     {
-        return view('wisata.create');
+        return view('Wisata.create');
     }
 
     /**
@@ -31,16 +32,15 @@ class WisataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'       => 'required|string|max:255',
-            'lokasi'     => 'required|string|max:255',
-            'deskripsi'  => 'required|string',
-            'harga_tiket'=> 'required|numeric|min:0',
-            'foto'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nama'        => 'required|string|max:255',
+            'lokasi'      => 'required|string|max:255',
+            'deskripsi'   => 'required|string',
+            'harga_tiket' => 'nullable|numeric|min:0',
+            'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $data = $request->only(['nama', 'lokasi', 'deskripsi', 'harga_tiket']);
 
-        // upload foto jika ada
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('wisata', 'public');
         }
@@ -55,7 +55,7 @@ class WisataController extends Controller
      */
     public function show(Wisata $wisata)
     {
-        return view('wisata.show', compact('wisata'));
+        return view('Wisata.show', compact('wisata'));
     }
 
     /**
@@ -63,7 +63,7 @@ class WisataController extends Controller
      */
     public function edit(Wisata $wisata)
     {
-        return view('wisata.edit', compact('wisata'));
+        return view('Wisata.edit', compact('wisata'));
     }
 
     /**
@@ -72,17 +72,17 @@ class WisataController extends Controller
     public function update(Request $request, Wisata $wisata)
     {
         $request->validate([
-            'nama'       => 'required|string|max:255',
-            'lokasi'     => 'required|string|max:255',
-            'deskripsi'  => 'required|string',
-            'harga_tiket'=> 'required|numeric|min:0',
-            'foto'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nama'        => 'required|string|max:255',
+            'lokasi'      => 'required|string|max:255',
+            'deskripsi'   => 'required|string',
+            'harga_tiket' => 'nullable|numeric|min:0',
+            'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $data = $request->only(['nama', 'lokasi', 'deskripsi', 'harga_tiket']);
 
-        // jika ada upload foto baru, hapus yang lama
         if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
             if ($wisata->foto && Storage::disk('public')->exists($wisata->foto)) {
                 Storage::disk('public')->delete($wisata->foto);
             }

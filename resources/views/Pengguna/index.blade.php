@@ -13,6 +13,14 @@
                 <i class="ti ti-user-plus"></i> Tambah Pengguna
             </a>
 
+            {{-- Notifikasi sukses --}}
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
             {{-- Tabel daftar pengguna --}}
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">
@@ -31,11 +39,16 @@
                                 <td>{{ $pengguna->name }}</td>
                                 <td>{{ $pengguna->email }}</td>
                                 <td>
-                                    <a href="{{ route('pengguna.edit', $pengguna->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="{{ route('pengguna.edit', $pengguna->id) }}" class="btn btn-sm btn-warning">
+                                        Edit
+                                    </a>
                                     <form action="{{ route('pengguna.destroy', $pengguna->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus pengguna ini?')">Hapus</button>
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Yakin ingin menghapus pengguna ini?')">
+                                            Hapus
+                                        </button>
                                     </form>
                                 </td>
                             </tr>

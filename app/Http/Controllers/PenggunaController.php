@@ -11,12 +11,12 @@ class PenggunaController extends Controller
     public function index()
     {
         $penggunas = Pengguna::all();
-        return view('Pengguna.index', compact('penggunas'));
+        return view('pengguna.index', compact('penggunas'));
     }
 
     public function create()
     {
-        return view('Pengguna.create');
+        return view('pengguna.create');
     }
 
     public function store(Request $request)
@@ -33,36 +33,39 @@ class PenggunaController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil ditambahkan!');
+        return redirect()->route('pengguna.index')
+            ->with('success', 'Pengguna berhasil ditambahkan!');
     }
 
     public function edit(Pengguna $pengguna)
     {
-        return view('Pengguna.edit', compact('pengguna'));
+        return view('pengguna.edit', compact('pengguna'));
     }
 
     public function update(Request $request, Pengguna $pengguna)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:penggunas,email,' . $pengguna->id,
-            'password' => 'nullable|min:6', // boleh kosong kalau tidak mau ganti
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:penggunas,email,' . $pengguna->id,
+            'password' => 'nullable|min:6',
         ]);
 
-        $data = $request->only('name', 'email');
+        $data = $request->only(['name', 'email']);
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
         $pengguna->update($data);
 
-        return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil diupdate!');
+        return redirect()->route('pengguna.index')
+            ->with('success', 'Pengguna berhasil diupdate!');
     }
 
     public function destroy(Pengguna $pengguna)
     {
         $pengguna->delete();
 
-        return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil dihapus!');
+        return redirect()->route('pengguna.index')
+            ->with('success', 'Pengguna berhasil dihapus!');
     }
 }

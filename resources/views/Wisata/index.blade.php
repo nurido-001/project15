@@ -33,7 +33,18 @@
                              alt="{{ $w->nama }}" 
                              style="height:200px; object-fit:cover;">
                     @else
-                        <img src="{{ asset('default/opo.jpg') }}" 
+                        {{-- Default sesuai nama wisata --}}
+                        @php
+                            $defaultImage = 'opo1.jpg'; // default umum
+                            if (stripos($w->nama, 'hutan hijau') !== false) {
+                                $defaultImage = 'opo1.jpg';
+                            } elseif (stripos($w->nama, 'hutan dingin') !== false) {
+                                $defaultImage = 'opo2.jpg';
+                            } elseif (stripos($w->nama, 'danau biru') !== false) {
+                                $defaultImage = 'opo3.jpg';
+                            }
+                        @endphp
+                        <img src="{{ asset('default/' . $defaultImage) }}" 
                              class="card-img-top" 
                              alt="Default Image" 
                              style="height:200px; object-fit:cover;">
@@ -45,7 +56,7 @@
                         <p class="card-text text-muted small">
                             <strong>Lokasi:</strong> {{ $w->lokasi }} <br>
                             <strong>Deskripsi:</strong> {{ \Illuminate\Support\Str::limit($w->deskripsi, 60) }} <br>
-                            @if(isset($w->harga_tiket))
+                            @if($w->harga_tiket !== null)
                                 <strong>Harga:</strong> Rp {{ number_format($w->harga_tiket, 0, ',', '.') }}
                             @endif
                         </p>
@@ -69,6 +80,11 @@
                 <p class="text-muted">Belum ada data wisata.</p>
             </div>
         @endforelse
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-4">
+        {{ $wisatas->links() }}
     </div>
 </div>
 @endsection
