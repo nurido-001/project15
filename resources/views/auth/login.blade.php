@@ -8,19 +8,29 @@
         <h4 class="mb-2">Selamat Datang 👋</h4>
         <p class="mb-4">Silakan login untuk melanjutkan</p>
 
-        <form method="POST" action="{{ route('login') }}">
+        {{-- Form login --}}
+        <form method="POST" action="{{ route('login.post') }}">
           @csrf
           <div class="mb-3">
             <label>Email</label>
-            <input type="email" name="email" class="form-control" required autofocus>
+            <input type="email" name="email" class="form-control" required autofocus value="{{ old('email') }}">
+            @error('email')
+              <small class="text-danger">{{ $message }}</small>
+            @enderror
           </div>
+
           <div class="mb-3">
             <label>Password</label>
             <input type="password" name="password" class="form-control" required>
+            @error('password')
+              <small class="text-danger">{{ $message }}</small>
+            @enderror
           </div>
+
           <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
 
+        {{-- Link register (redirect ke login, karena register dimatikan di routes) --}}
         <p class="text-center mt-3">
           Belum punya akun? <a href="{{ route('register') }}">Daftar</a>
         </p>

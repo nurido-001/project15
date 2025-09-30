@@ -17,9 +17,14 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect()->route('dashboard'); // semua role ke dashboard yang sama
+            // regenerate session biar aman
+            $request->session()->regenerate();
+
+            // redirect ke halaman yang dimaksud atau dashboard
+            return redirect()->intended(route('dashboard'));
         }
 
+        // kalau gagal, balik dengan error
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
@@ -28,6 +33,11 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+
+        // invalidate session + regenerate token biar aman
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 }

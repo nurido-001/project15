@@ -26,6 +26,7 @@
         @forelse ($wisatas as $w)
             <div class="col-md-4 col-sm-6">
                 <div class="card shadow-sm border-0 h-100">
+
                     {{-- Foto --}}
                     @if($w->foto)
                         <img src="{{ asset('storage/' . $w->foto) }}" 
@@ -56,7 +57,7 @@
                         <p class="card-text text-muted small">
                             <strong>Lokasi:</strong> {{ $w->lokasi }} <br>
                             <strong>Deskripsi:</strong> {{ \Illuminate\Support\Str::limit($w->deskripsi, 60) }} <br>
-                            @if($w->harga_tiket !== null)
+                            @if(!is_null($w->harga_tiket))
                                 <strong>Harga:</strong> Rp {{ number_format($w->harga_tiket, 0, ',', '.') }}
                             @endif
                         </p>

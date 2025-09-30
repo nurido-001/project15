@@ -15,7 +15,8 @@ class WisataController extends Controller
     {
         // Pagination biar tidak berat kalau data banyak
         $wisatas = Wisata::latest()->paginate(9);
-        return view('Wisata.index', compact('wisatas'));
+
+        return view('Wisata.index', compact('wisatas')); // tetap huruf besar
     }
 
     /**

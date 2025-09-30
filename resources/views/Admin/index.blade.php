@@ -7,7 +7,7 @@
     <h4 class="fw-bold py-3 mb-4">✨ Rekomendasi Tempat Wisata</h4>
 
     {{-- Carousel Foto Utama (ambil 3 wisata teratas) --}}
-    @if($wisatas->count() > 0)
+    @if(isset($wisatas) && $wisatas->count() > 0)
     <div id="carouselWisata" class="carousel slide mb-5 shadow-sm" data-bs-ride="carousel">
         <div class="carousel-inner">
             @foreach($wisatas->take(3) as $index => $wisata)
@@ -15,7 +15,7 @@
                 <img src="{{ asset('storage/' . $wisata->foto) }}" class="d-block w-100 rounded-3" style="max-height: 400px; object-fit: cover;" alt="{{ $wisata->nama }}">
                 <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-2 p-2">
                     <h5>{{ $wisata->nama }}</h5>
-                    <p>{{ Str::limit($wisata->deskripsi, 100) }}</p>
+                    <p>{{ \Illuminate\Support\Str::limit($wisata->deskripsi, 100) }}</p>
                 </div>
             </div>
             @endforeach
@@ -38,7 +38,7 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ $wisata->nama }}</h5>
                     <p class="text-muted mb-1"><i class="ti ti-map-pin"></i> {{ $wisata->lokasi }}</p>
-                    <p class="card-text flex-grow-1">{{ Str::limit($wisata->deskripsi, 120) }}</p>
+                    <p class="card-text flex-grow-1">{{ \Illuminate\Support\Str::limit($wisata->deskripsi, 120) }}</p>
 
                     {{-- Rating (opsional, pastikan ada kolom rating di tabel wisata) --}}
                     @if(!empty($wisata->rating))
