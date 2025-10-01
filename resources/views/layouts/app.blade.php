@@ -1,84 +1,116 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* 🌌 Background halaman utama */
+  body {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef, #dee2e6); /* tetap terang */
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    color: #212529;
+  }
 
-  <!-- CSRF Token -->
-  <meta name="csrf-token" content="{{ csrf_token() }}">
+  /* 🌑 Sidebar Dark Gradient */
+  .sidebar {
+    width: 250px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: linear-gradient(180deg, #0d0d0d, #001f3f, #2f3640);
+    padding: 1rem;
+    color: #e0e0e0;
+    box-shadow: 4px 0 12px rgba(0,0,0,0.6);
+    z-index: 1000;
+  }
 
-  <title>{{ config('app.name', 'Wisataku') }}</title>
+  .sidebar h4 {
+    color: #f8f9fa;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  }
 
-  <!-- Bootstrap / Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  /* 🌟 Link menu */
+  .sidebar .nav-link {
+    padding: 0.7rem 1rem;
+    color: #cfd8dc;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: block;
+  }
 
-  <style>
-    body { background-color: #f8f9fa; }
-    .sidebar {
-      width: 250px;
-      min-height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #fff;
-      border-right: 1px solid #ddd;
-      padding: 1rem;
-    }
-    .content {
-      margin-left: 250px;
-      padding: 2rem;
-    }
-    .sidebar .nav-link {
-      padding: 0.6rem 1rem;
-      color: #333;
-      border-radius: 8px;
-      margin-bottom: 5px;
-    }
-    .sidebar .nav-link.active,
-    .sidebar .nav-link:hover {
-      background-color: #e9ecef;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="d-flex">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h4 class="fw-bold mb-4">🌍 Wisataku</h4>
-      <nav class="nav flex-column">
-        <a class="nav-link {{ request()->is('home') ? 'active' : '' }}" href="{{ route('home') }}">
-          <i class="bi bi-house"></i> Home
-        </a>
-        <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-          <i class="bi bi-speedometer2"></i> Dashboard
-        </a>
-        <a class="nav-link {{ request()->is('dashboard/cards') ? 'active' : '' }}" href="{{ route('dashboard.cards') }}">
-          <i class="bi bi-grid-3x3-gap"></i> Dashboard Cards
-        </a>
-        <a class="nav-link {{ request()->is('admin*') ? 'active' : '' }}" href="{{ route('admin.index') }}">
-          <i class="bi bi-person-gear"></i> Kelola Admin
-        </a>
-        <a class="nav-link {{ request()->is('pengguna*') ? 'active' : '' }}" href="{{ route('pengguna.index') }}">
-          <i class="bi bi-people"></i> Kelola Pengguna
-        </a>
-        <a class="nav-link {{ request()->is('wisata*') ? 'active' : '' }}" href="{{ route('wisata.index') }}">
-          <i class="bi bi-map"></i> Kelola Tempat Wisata
-        </a>
-        <a class="nav-link {{ request()->is('grafik*') ? 'active' : '' }}" href="{{ route('grafik.index') }}">
-          <i class="bi bi-bar-chart-line"></i> Lihat Grafik Pengguna
-        </a>
-      </nav>
-    </div>
+  /* Hover dengan efek garis neon di kiri */
+  .sidebar .nav-link:hover {
+    background: rgba(0, 229, 255, 0.08);
+    color: #fff;
+    transform: translateX(4px);
+  }
 
-    <!-- Content -->
-    <div class="content">
-      @yield('content')
-    </div>
-  </div>
+  .sidebar .nav-link:hover::before,
+  .sidebar .nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: #00e5ff;
+    box-shadow: 0 0 8px #00e5ff, 0 0 16px #00e5ff;
+    border-radius: 2px;
+  }
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  /* Aktif dengan cyan glow */
+  .sidebar .nav-link.active {
+    background: rgba(0, 229, 255, 0.15);
+    font-weight: bold;
+    color: #00e5ff;
+  }
+
+  /* 🌌 Konten terang */
+  .content {
+    margin-left: 250px;
+    padding: 2rem;
+    min-height: 100vh;
+    background: #ffffff; /* fix biar jelas */
+    animation: fadeIn 0.8s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ✨ Card efek */
+  .card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    background: #fff;
+    color: #212529;
+    position: relative;
+    z-index: 1; /* penting */
+    will-change: transform, box-shadow;
+  }
+
+  .card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(45deg, #00e5ff, #ff6a00, #ee0979, #00c6ff);
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s;
+    filter: blur(12px);
+  }
+
+  .card:hover::before {
+    opacity: 1;
+  }
+</style>

@@ -13,10 +13,10 @@ class WisataController extends Controller
      */
     public function index()
     {
-        // Pagination biar tidak berat kalau data banyak
+        // Gunakan pagination agar lebih ringan
         $wisatas = Wisata::latest()->paginate(9);
 
-        return view('Wisata.index', compact('wisatas')); // tetap huruf besar
+        return view('wisata.index', compact('wisatas'));
     }
 
     /**
@@ -24,7 +24,7 @@ class WisataController extends Controller
      */
     public function create()
     {
-        return view('Wisata.create');
+        return view('wisata.create');
     }
 
     /**
@@ -32,7 +32,7 @@ class WisataController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama'        => 'required|string|max:255',
             'lokasi'      => 'required|string|max:255',
             'deskripsi'   => 'required|string',
@@ -40,15 +40,14 @@ class WisataController extends Controller
             'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->only(['nama', 'lokasi', 'deskripsi', 'harga_tiket']);
-
+        // Upload foto jika ada
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('wisata', 'public');
+            $validated['foto'] = $request->file('foto')->store('wisata', 'public');
         }
 
-        Wisata::create($data);
+        Wisata::create($validated);
 
-        return redirect()->route('wisata.index')->with('success', 'Data berhasil ditambahkan!');
+        return redirect()->route('wisata.index')->with('success', '✅ Data berhasil ditambahkan!');
     }
 
     /**
@@ -56,7 +55,7 @@ class WisataController extends Controller
      */
     public function show(Wisata $wisata)
     {
-        return view('Wisata.show', compact('wisata'));
+        return view('wisata.show', compact('wisata'));
     }
 
     /**
@@ -64,7 +63,7 @@ class WisataController extends Controller
      */
     public function edit(Wisata $wisata)
     {
-        return view('Wisata.edit', compact('wisata'));
+        return view('wisata.edit', compact('wisata'));
     }
 
     /**
@@ -72,7 +71,7 @@ class WisataController extends Controller
      */
     public function update(Request $request, Wisata $wisata)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama'        => 'required|string|max:255',
             'lokasi'      => 'required|string|max:255',
             'deskripsi'   => 'required|string',
@@ -80,19 +79,17 @@ class WisataController extends Controller
             'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->only(['nama', 'lokasi', 'deskripsi', 'harga_tiket']);
-
+        // Jika upload foto baru → hapus lama & simpan baru
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($wisata->foto && Storage::disk('public')->exists($wisata->foto)) {
                 Storage::disk('public')->delete($wisata->foto);
             }
-            $data['foto'] = $request->file('foto')->store('wisata', 'public');
+            $validated['foto'] = $request->file('foto')->store('wisata', 'public');
         }
 
-        $wisata->update($data);
+        $wisata->update($validated);
 
-        return redirect()->route('wisata.index')->with('success', 'Data berhasil diperbarui!');
+        return redirect()->route('wisata.index')->with('success', '✏️ Data berhasil diperbarui!');
     }
 
     /**
@@ -100,12 +97,13 @@ class WisataController extends Controller
      */
     public function destroy(Wisata $wisata)
     {
+        // Hapus foto dari storage jika ada
         if ($wisata->foto && Storage::disk('public')->exists($wisata->foto)) {
             Storage::disk('public')->delete($wisata->foto);
         }
 
         $wisata->delete();
 
-        return redirect()->route('wisata.index')->with('success', 'Data berhasil dihapus!');
+        return redirect()->route('wisata.index')->with('success', '🗑️ Data berhasil dihapus!');
     }
 }

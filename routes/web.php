@@ -33,8 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/dashboard/cards', [HomeController::class, 'cards'])->name('dashboard.cards');
 
-    // Wisata CRUD (otomatis: wisata.index, wisata.create, dll)
-    Route::resource('wisata', WisataController::class);
+    // ==========================
+    // Wisata CRUD
+    // ==========================
+    Route::resource('wisata', WisataController::class)
+        ->parameters(['wisata' => 'wisata']); // 🔥 Fix biar {wisata} bukan {wisatum}
 
     // ==========================
     // Admin khusus
@@ -44,10 +47,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-        // Pengguna CRUD (otomatis: pengguna.index, pengguna.create, dll)
+        // Pengguna CRUD
         Route::resource('pengguna', PenggunaController::class);
 
-        // Grafik (dibuat konsisten: grafik.index)
+        // Grafik
         Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
     });
 });
