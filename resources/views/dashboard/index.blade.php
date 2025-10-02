@@ -194,11 +194,11 @@
     chart: { type: 'line', height: 300 },
     series: [{
       name: 'Jumlah Pengguna',
-      data: @json($grafikPengguna)
+      data: @json($data) // array angka dari controller
     }],
     colors: ['#008FFB'],
     xaxis: {
-      categories: Object.values(@json($bulan))
+      categories: @json($labels) // array nama bulan dari controller
     }
   };
   var chart = new ApexCharts(document.querySelector("#grafik-pengguna"), options);

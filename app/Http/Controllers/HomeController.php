@@ -23,40 +23,43 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        // hitung total data
+        // Hitung total data
         $totalAdmin        = Administrator::count();
         $totalPengguna     = Pengguna::count();
         $totalTempatWisata = TempatWisata::count();
         $totalPenilaian    = Penilaian::count();
 
-        // data terbaru
+        // Data terbaru (ambil 5 terakhir)
         $latestAdmins   = Administrator::latest()->take(5)->get();
         $latestPengguna = Pengguna::latest()->take(5)->get();
         $latestWisata   = TempatWisata::latest()->take(5)->get();
-        $latestReview   = Penilaian::latest()->take(5)->get();
+        $latestReview   = Penilaian::with(['pengguna','tempatWisata']) // eager load biar tidak N+1 query
+                            ->latest()
+                            ->take(5)
+                            ->get();
 
-        // data grafik (jumlah pengguna per bulan)
-        $grafikPengguna = Pengguna::select(
-                DB::raw('COUNT(*) as total'),
-                DB::raw('MONTH(created_at) as bulan')
-            )
+        // Data grafik (jumlah pengguna per bulan)
+        $grafikPengguna = Pengguna::selectRaw('COUNT(*) as total, MONTH(created_at) as bulan')
             ->groupBy('bulan')
-            ->pluck('total', 'bulan');
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan'); // hasil: [bulan => total]
 
+        // Mapping bulan
         $bulan = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
+            4 => 'April', 5 => 'Mei', 6 => 'Juni',
+            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
+            10 => 'Oktober', 11 => 'November', 12 => 'Desember',
         ];
+
+        // Siapkan data untuk chart
+        $labels = [];
+        $data   = [];
+
+        foreach ($grafikPengguna as $bulanIndex => $total) {
+            $labels[] = $bulan[$bulanIndex] ?? $bulanIndex;
+            $data[]   = $total;
+        }
 
         return view('dashboard.index', compact(
             'totalAdmin',
@@ -67,8 +70,8 @@ class HomeController extends Controller
             'latestPengguna',
             'latestWisata',
             'latestReview',
-            'grafikPengguna',
-            'bulan'
+            'labels',
+            'data'
         ));
     }
 

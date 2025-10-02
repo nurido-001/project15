@@ -11,12 +11,12 @@ class PenggunaController extends Controller
     public function index()
     {
         $penggunas = Pengguna::all();
-        return view('pengguna.index', compact('penggunas'));
+        return view('Pengguna.index', compact('penggunas'));
     }
 
     public function create()
     {
-        return view('pengguna.create');
+        return view('Pengguna.create');
     }
 
     public function store(Request $request)
@@ -39,7 +39,7 @@ class PenggunaController extends Controller
 
     public function edit(Pengguna $pengguna)
     {
-        return view('pengguna.edit', compact('pengguna'));
+        return view('Pengguna.edit', compact('pengguna'));
     }
 
     public function update(Request $request, Pengguna $pengguna)

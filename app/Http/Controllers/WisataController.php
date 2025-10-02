@@ -16,7 +16,7 @@ class WisataController extends Controller
         // Gunakan pagination agar lebih ringan
         $wisatas = Wisata::latest()->paginate(9);
 
-        return view('wisata.index', compact('wisatas'));
+        return view('Wisata.index', compact('wisatas'));
     }
 
     /**
@@ -24,7 +24,7 @@ class WisataController extends Controller
      */
     public function create()
     {
-        return view('wisata.create');
+        return view('Wisata.create');
     }
 
     /**
@@ -55,7 +55,7 @@ class WisataController extends Controller
      */
     public function show(Wisata $wisata)
     {
-        return view('wisata.show', compact('wisata'));
+        return view('Wisata.show', compact('wisata'));
     }
 
     /**
@@ -63,7 +63,7 @@ class WisataController extends Controller
      */
     public function edit(Wisata $wisata)
     {
-        return view('wisata.edit', compact('wisata'));
+        return view('Wisata.edit', compact('wisata'));
     }
 
     /**

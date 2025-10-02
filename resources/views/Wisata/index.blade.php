@@ -48,20 +48,20 @@
     }
 
     .btn-outline-warning {
-        border-color: #ff9800;
-        color: #ff9800;
+        border-color: #079313;
+        color: #217108;
     }
     .btn-outline-warning:hover {
-        background: #ff9800;
-        color: white;
+        background: #6804eb;
+        color: rgb(43, 0, 255);
     }
 
     .btn-outline-danger {
-        border-color: #f44336;
-        color: #f44336;
+        border-color: #240ba4;
+        color: #6a03a2;
     }
     .btn-outline-danger:hover {
-        background: #f44336;
+        background: #560dff;
         color: white;
     }
 </style>

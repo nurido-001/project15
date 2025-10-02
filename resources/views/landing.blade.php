@@ -16,10 +16,8 @@
     }
 
     body {
-      background: url('{{ asset('img/pp.jpg') }}') no-repeat center center;
+      background: url('{{ asset('img/mm.jpg') }}') no-repeat center center fixed;
       background-size: cover;
-      background-position: top center;
-      background-attachment: fixed;
       color: #fff;
     }
 
@@ -40,7 +38,7 @@
     .navbar .logo {
       font-size: 1.5rem;
       font-weight: 700;
-      color: #4dff00e6;
+      color: #00e1ff;
     }
 
     .navbar ul {
@@ -57,22 +55,22 @@
     }
 
     .navbar ul li a:hover {
-      color: #73ff00;
+      color: #00e1ff;
     }
 
     .btn-nav {
       padding: 8px 18px;
-      border: 2px solid #ffd000;
+      border: 2px solid #0066db;
       border-radius: 5px;
-      color: #eaff00;
+      color: #00bbff;
       font-weight: 600;
       text-decoration: none;
       transition: 0.3s;
     }
 
     .btn-nav:hover {
-      background: #91ff00;
-      color: #fff;
+      background: #099404;
+      color: #000;
     }
 
     /* Section umum */
@@ -82,8 +80,10 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.55);
       text-align: left;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.65));
+      border-radius: 15px;
+      margin-bottom: 40px;
       opacity: 0;
       transform: translateY(40px);
       transition: all 0.8s ease-out;
@@ -95,9 +95,24 @@
     }
 
     section h2 {
-      color: #2bff00;
-      font-size: 2.2rem;
+      font-size: 2.3rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #00e1ff, #00ff0d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 20px;
+      position: relative;
+    }
+
+    section h2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 70px;
+      height: 3px;
+      background: linear-gradient(90deg, #00ff04, #c8ff00);
+      border-radius: 3px;
     }
 
     section p,
@@ -109,11 +124,24 @@
 
     section ul {
       margin-top: 15px;
-      padding-left: 20px;
+      padding-left: 0;
     }
 
     section ul li {
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      padding: 10px 15px;
+      border-left: 4px solid #009dff;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    section ul li:hover {
+      transform: translateX(8px) scale(1.03);
+      box-shadow: 0 6px 15px rgba(0, 225, 255, 0.4);
+      border-left-color: #9dff00;
     }
 
     /* Hero */
@@ -126,7 +154,10 @@
     .hero h1 {
       font-size: 3.5rem;
       font-weight: 700;
-      color: #37ff00;
+      background: linear-gradient(to right, #00e1ff, #00ff73, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 3s ease-in-out infinite alternate;
       margin-bottom: 15px;
     }
 
@@ -136,6 +167,16 @@
       line-height: 1.6;
     }
 
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #00ff1e, 0 0 20px #00ff11;
+      }
+
+      to {
+        text-shadow: 0 0 20px #06a8ed, 0 0 30px #0aa3e4;
+      }
+    }
+
     /* Footer */
     footer {
       background: rgba(0, 0, 0, 0.9);
@@ -143,7 +184,7 @@
       text-align: center;
       padding: 25px 10px;
       font-size: 0.9rem;
-      border-top: 1px solid #9dff00;
+      border-top: 1px solid #00e1ff;
     }
 
     footer p {
@@ -167,33 +208,37 @@
   </nav>
 
   <!-- Home -->
-  <section class="hero" id="home">
-    <h2>Selamat Datang Di</h2>
-    <h1>Aplikasi Wisataku</h1>
-    <p>
-     👋 Hai, Selamat Datang di Wisataku!
+ <section class="hero" id="home">
+  <h2>Selamat Datang di</h2>
+  <h1>Aplikasi Wisataku</h1>
+  <p>
+    👋 Halo, selamat datang di Wisataku!  
+    Di sini kamu bisa cari info tempat-tempat wisata seru sesuai selera kamu.  
+    Tinggal pilih, lihat rekomendasi, terus bisa juga share pengalamanmu.  
+    Biar liburan makin gampang, asik, dan pastinya lebih berkesan. 🌿
+  </p>
+</section>
 
-Wisataku hadir untuk menemani perjalanan Anda mencari tempat wisata yang seru dan sesuai dengan selera.
-Cukup cari, temukan rekomendasi, dan bagikan pengalaman Anda.
-Jelajahi lebih mudah, biar liburan jadi lebih menyenangkan. 🌿
-    </p>
-  </section>
 
   <!-- Tentang -->
   <section id="tentang">
     <h2>Tentang Aplikasi Wisataku</h2>
     <p>
-     Wisataku adalah aplikasi yang membantu pengguna menemukan dan mendapatkan rekomendasi tempat wisata sesuai minat dan kebutuhan mereka.
-
-Aplikasi ini dirancang untuk dua jenis pengguna:
+      Wisataku adalah aplikasi yang membantu pengguna menemukan dan mendapatkan rekomendasi tempat wisata sesuai dengan
+      minat dan kebutuhan Anda.
     </p>
     <p>
-     Pengguna umum – dapat mencari destinasi wisata, mendapatkan rekomendasi, serta memberi penilaian berdasarkan pengalaman kunjungan.
-
-Administrator – memiliki akses penuh untuk mengelola data admin, data pengguna, serta melihat laporan kunjungan dalam bentuk grafik.
+      👤 Pengguna umum – dapat mencari destinasi wisata, mendapatkan rekomendasi, serta memberi penilaian berdasarkan
+      pengalaman kunjungan.
     </p>
     <p>
-     Dengan Wisataku, proses pencarian destinasi menjadi lebih mudah, terarah, dan menyenangkan. Tujuan utama aplikasi ini adalah memberikan pengalaman wisata yang lebih personal, sekaligus membantu pengelola mengatur informasi dengan rapi dan akurat.
+      🛠️ Administrator – memiliki akses penuh untuk mengelola data wisata, data pengguna, serta melihat laporan
+      kunjungan dalam bentuk grafik.
+    </p>
+    <p>
+      Dengan Wisataku, proses pencarian destinasi menjadi lebih mudah, terarah, dan menyenangkan.
+      Tujuan utama aplikasi ini adalah memberikan pengalaman wisata yang lebih personal, sekaligus membantu pengelola
+      mengatur informasi dengan rapi dan akurat.
     </p>
   </section>
 
@@ -205,22 +250,22 @@ Administrator – memiliki akses penuh untuk mengelola data admin, data pengguna
       <li>🔍 Pencarian Tempat Wisata</li>
       <li>🌟 Rekomendasi Tempat Wisata</li>
       <li>📝 Ulasan & Penilaian</li>
-      <li>👤 Manajemen Pengguna</li>
+      <li>👤 Manajemen Pengguna dan Pengunjung</li>
       <li>🛠️ Manajemen Admin (khusus Administrator)</li>
-      <li>📊 Grafik & Statistik Pengguna</li>
+      <li>📊 Grafik & Statistik Kunjungan</li>
     </ul>
   </section>
 
   <!-- Panduan -->
   <section id="panduan">
     <h2>Panduan Singkat</h2>
-    <p>Ikuti langkah berikut untuk menggunakan aplikasi:</p>
+    <p>Ikuti langkah berikut untuk menggunakan aplikasi Wisataku:</p>
     <ul>
-      <li>🔑 Login menggunakan akun yang sudah terdaftar.</li>
-      <li>👥 Kelola data pegawai dan departemen melalui menu dashboard.</li>
-      <li>🕒 Catat absensi harian dengan mudah.</li>
-      <li>📝 Ajukan cuti dan pantau status persetujuan.</li>
-      <li>📊 Lihat laporan pegawai untuk analisis data.</li>
+      <li>🔑 Login menggunakan akun email Anda sendiri.</li>
+      <li>🌍 Jelajahi daftar tempat wisata yang tersedia di halaman utama.</li>
+      <li>📝 Admin dapat menambahkan, mengedit, atau menghapus data wisata melalui menu dashboard.</li>
+      <li>👥 Kelola data pengguna (khusus admin) agar akses aplikasi lebih teratur.</li>
+      <li>📊 Lihat grafik kunjungan wisata untuk memantau perkembangan tempat wisata favorit mu.</li>
     </ul>
   </section>
 
@@ -229,16 +274,16 @@ Administrator – memiliki akses penuh untuk mengelola data admin, data pengguna
     <h2>Kontak</h2>
     <p>Jika ada pertanyaan atau kendala, silakan hubungi:</p>
     <ul>
+      <li>📞 Telepon: (+62) 812345678</li>
+      <li>📧 Email: wisataku@example.com</li>
       <li>📍 Alamat: Jl. Raya Kenangan No.87, Kota Wisata</li>
-      <li>📧 Email: Wisataku@example.com</li>
-      <li>📞 Telepon: (+63) 12345678</li>
     </ul>
   </section>
 
   <!-- Footer -->
   <footer>
     <p>© 2025 Wisataku. Semua hak dilindungi.</p>
-    <p>Jl. Raya Kenangan No.87, Kota Wisata | Telp: (+62) 1234567</p>
+    <p>Jl. Raya Kenangan No.87, Kota Wisata | Telp: (+62) 812345678</p>
   </footer>
 
   <!-- Script animasi scroll -->
