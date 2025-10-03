@@ -9,18 +9,19 @@ class Wisata extends Model
 {
     use HasFactory;
 
-    // kolom yang boleh diisi (mass assignment)
     protected $fillable = [
         'nama',
         'lokasi',
         'deskripsi',
-        'harga_tiket', // ✅ tambahkan ini
+        'harga_tiket',
         'foto',
     ];
 
-    // contoh relasi opsional (hapus kalau belum dipakai)
-    // public function komentar()
-    // {
-    //     return $this->hasMany(Komentar::class);
-    // }
+    /**
+     * Relasi: satu Wisata bisa punya banyak Penilaian (review).
+     */
+    public function penilaians()
+    {
+        return $this->hasMany(Penilaian::class, 'tempat_wisata_id');
+    }
 }

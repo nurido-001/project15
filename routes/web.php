@@ -7,6 +7,7 @@ use App\Http\Controllers\WisataController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PenilaianController; // ✅ tambahkan controller untuk review
 
 // ==========================
 // Halaman utama (landing page -> daftar wisata)
@@ -38,6 +39,13 @@ Route::middleware('auth')->group(function () {
     // ==========================
     Route::resource('wisata', WisataController::class)
         ->parameters(['wisata' => 'wisata']); // 🔥 Fix biar {wisata} bukan {wisatum}
+
+    // ==========================
+    // Penilaian (Review)
+    // ==========================
+    Route::resource('penilaian', PenilaianController::class)->only([
+        'store', 'destroy'
+    ]);
 
     // ==========================
     // Admin khusus

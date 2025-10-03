@@ -41,6 +41,66 @@
 
                     <h5><strong>Deskripsi:</strong></h5>
                     <p class="text-muted">{{ $wisata->deskripsi }}</p>
+
+                    {{-- Form Tambah Review --}}
+                    <hr>
+                    <h5 class="mt-4">Tambah Review</h5>
+                    <form action="{{ route('penilaian.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="tempat_wisata_id" value="{{ $wisata->id }}">
+
+                        <div class="mb-3">
+                            <label for="rating">Rating</label>
+                            <select name="rating" id="rating" class="form-control" required>
+                                <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4)</option>
+                                <option value="3">⭐⭐⭐ (3)</option>
+                                <option value="2">⭐⭐ (2)</option>
+                                <option value="1">⭐ (1)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="komentar">Komentar</label>
+                            <textarea name="komentar" id="komentar" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-send"></i> Kirim Review
+                        </button>
+                    </form>
+
+                    {{-- List Review --}}
+                    <hr>
+                    <h5 class="mt-4">Review Pengunjung</h5>
+                    @forelse($wisata->penilaians as $review)
+                        <div class="border rounded p-3 mb-2">
+                            <strong>{{ $review->pengguna->nama ?? 'Anonim' }}</strong> 
+                            <span class="text-warning">
+                                {{ str_repeat('⭐', $review->rating) }}
+                            </span>
+                            <p class="mb-1">{{ $review->komentar }}</p>
+                            <small class="text-muted">
+                                {{ $review->created_at->format('d M Y H:i') }}
+                            </small>
+
+                            {{-- Jika yang login adalah pemilik review --}}
+                            @if(auth()->check() && $review->pengguna_id == auth()->id())
+                                <form action="{{ route('penilaian.destroy', $review->id) }}" 
+                                      method="POST" 
+                                      class="d-inline"
+                                      onsubmit="return confirm('Yakin ingin menghapus review ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-2">
+                                        <i class="ti ti-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="text-muted">Belum ada review.</p>
+                    @endforelse
                 </div>
 
                 {{-- Footer --}}
