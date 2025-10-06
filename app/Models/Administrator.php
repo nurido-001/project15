@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Administrator extends Model
+class Administrator extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -15,8 +16,13 @@ class Administrator extends Model
         'password',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     /**
-     * Relasi: 1 Administrator memiliki banyak Pengguna
+    
      */
     public function penggunas()
     {
@@ -24,7 +30,6 @@ class Administrator extends Model
     }
 
     /**
-     * Relasi: 1 Administrator memiliki banyak GrafikPengguna
      */
     public function grafikPenggunas()
     {

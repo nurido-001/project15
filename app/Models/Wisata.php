@@ -18,10 +18,10 @@ class Wisata extends Model
     ];
 
     /**
-     * Relasi: satu Wisata bisa punya banyak Penilaian (review).
+     * Relasi: satu wisata bisa punya banyak penilaian (review)
      */
     public function penilaians()
     {
-        return $this->hasMany(Penilaian::class, 'tempat_wisata_id');
+        return $this->hasMany(Penilaian::class, 'wisata_id');
     }
 }

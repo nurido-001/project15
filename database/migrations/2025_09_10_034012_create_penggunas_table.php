@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi untuk tabel pengguna.
      */
     public function up(): void
     {
@@ -15,20 +15,21 @@ return new class extends Migration
             $table->id();
             $table->string('name');              // nama pengguna
             $table->string('email')->unique();   // email unik
-            $table->string('password');          // password (wajib, untuk login)
+            $table->string('password');          // password terenkripsi
 
-            // Relasi ke administrator
+            // 🔗 Relasi opsional ke administrator
             $table->foreignId('administrator_id')
                   ->nullable()
                   ->constrained('administrators')
                   ->onDelete('cascade');
 
+            // 🕒 Waktu pembuatan dan pembaruan
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Batalkan migrasi.
      */
     public function down(): void
     {

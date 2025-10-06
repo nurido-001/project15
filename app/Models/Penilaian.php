@@ -13,7 +13,7 @@ class Penilaian extends Model
         'rating',
         'komentar',
         'pengguna_id',
-        'tempat_wisata_id',
+        'wisata_id', // ✅ diganti dari tempat_wisata_id
     ];
 
     /**
@@ -25,10 +25,10 @@ class Penilaian extends Model
     }
 
     /**
-     * Relasi: review untuk tempat wisata
+     * Relasi: review untuk wisata
      */
     public function wisata()
     {
-        return $this->belongsTo(Wisata::class, 'tempat_wisata_id');
+        return $this->belongsTo(Wisata::class, 'wisata_id');
     }
 }
