@@ -11,7 +11,7 @@
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
           <h6 class="card-title">Total Admin</h6>
-          <h3 class="fw-bold">{{ $totalAdmin }}</h3>
+          <h3 class="fw-bold">{{ $totalAdmin ?? 0 }}</h3>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
           <h6 class="card-title">Total Pengguna</h6>
-          <h3 class="fw-bold">{{ $totalPengguna }}</h3>
+          <h3 class="fw-bold">{{ $totalPengguna ?? 0 }}</h3>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
           <h6 class="card-title">Tempat Wisata</h6>
-          <h3 class="fw-bold">{{ $totalTempatWisata }}</h3>
+          <h3 class="fw-bold">{{ $totalTempatWisata ?? 0 }}</h3>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
           <h6 class="card-title">Penilaian</h6>
-          <h3 class="fw-bold">{{ $totalPenilaian }}</h3>
+          <h3 class="fw-bold">{{ $totalPenilaian ?? 0 }}</h3>
         </div>
       </div>
     </div>
@@ -43,8 +43,8 @@
 
   {{-- Grafik Pengguna --}}
   <div class="card mb-4 shadow-sm border-0">
-    <div class="card-header">
-      <h5 class="mb-0">Grafik Pengguna per Bulan</h5>
+    <div class="card-header bg-light fw-bold">
+      <h5 class="mb-0 text-primary">Grafik Pengguna per Bulan</h5>
     </div>
     <div class="card-body">
       <div id="grafik-pengguna"></div>
@@ -56,11 +56,11 @@
     {{-- Pengguna Terbaru --}}
     <div class="col-md-6">
       <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header">
-          <h5 class="mb-0">Pengguna Terbaru</h5>
+        <div class="card-header bg-light fw-bold">
+          <h5 class="mb-0 text-primary">Pengguna Terbaru</h5>
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover mb-0">
+          <table class="table table-striped table-hover table-sm mb-0">
             <thead>
               <tr>
                 <th>Nama</th>
@@ -73,7 +73,7 @@
                 <tr>
                   <td>{{ $p->nama ?? '-' }}</td>
                   <td>{{ $p->email ?? '-' }}</td>
-                  <td>{{ $p->created_at->format('d M Y') }}</td>
+                  <td>{{ $p->created_at ? $p->created_at->format('d M Y') : '-' }}</td>
                 </tr>
               @empty
                 <tr>
@@ -89,11 +89,11 @@
     {{-- Wisata Terbaru --}}
     <div class="col-md-6">
       <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header">
-          <h5 class="mb-0">Wisata Terbaru</h5>
+        <div class="card-header bg-light fw-bold">
+          <h5 class="mb-0 text-primary">Wisata Terbaru</h5>
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover mb-0">
+          <table class="table table-striped table-hover table-sm mb-0">
             <thead>
               <tr>
                 <th>Nama</th>
@@ -104,9 +104,9 @@
             <tbody>
               @forelse($latestWisata as $wisata)
                 <tr>
-                  <td>{{ $wisata->nama }}</td>
-                  <td>{{ $wisata->lokasi }}</td>
-                  <td>{{ $wisata->created_at->format('d M Y') }}</td>
+                  <td>{{ $wisata->nama ?? '-' }}</td>
+                  <td>{{ $wisata->lokasi ?? '-' }}</td>
+                  <td>{{ $wisata->created_at ? $wisata->created_at->format('d M Y') : '-' }}</td>
                 </tr>
               @empty
                 <tr>
@@ -122,11 +122,11 @@
 
   {{-- Admin Terbaru --}}
   <div class="card mb-4 shadow-sm border-0">
-    <div class="card-header">
-      <h5 class="mb-0">Admin Terbaru</h5>
+    <div class="card-header bg-light fw-bold">
+      <h5 class="mb-0 text-primary">Admin Terbaru</h5>
     </div>
     <div class="table-responsive">
-      <table class="table table-striped table-hover mb-0">
+      <table class="table table-striped table-hover table-sm mb-0">
         <thead>
           <tr>
             <th>Nama</th>
@@ -139,7 +139,7 @@
             <tr>
               <td>{{ $admin->nama ?? '-' }}</td>
               <td>{{ $admin->email ?? '-' }}</td>
-              <td>{{ $admin->created_at->format('d M Y') }}</td>
+              <td>{{ $admin->created_at ? $admin->created_at->format('d M Y') : '-' }}</td>
             </tr>
           @empty
             <tr>
@@ -153,11 +153,11 @@
 
   {{-- Penilaian Terbaru --}}
   <div class="card mb-4 shadow-sm border-0">
-    <div class="card-header">
-      <h5 class="mb-0">Penilaian Terbaru</h5>
+    <div class="card-header bg-light fw-bold">
+      <h5 class="mb-0 text-primary">Penilaian Terbaru</h5>
     </div>
     <div class="table-responsive">
-      <table class="table table-striped table-hover mb-0">
+      <table class="table table-striped table-hover table-sm mb-0">
         <thead>
           <tr>
             <th>Pengguna</th>
@@ -170,9 +170,9 @@
           @forelse($latestReview as $review)
             <tr>
               <td>{{ $review->pengguna->nama ?? '-' }}</td>
-              <td>{{ $review->tempatWisata->nama ?? '-' }}</td>
-              <td>{{ $review->rating }}</td>
-              <td>{{ $review->created_at->format('d M Y') }}</td>
+              <td>{{ $review->wisata->nama ?? '-' }}</td>
+              <td>{{ $review->rating ?? '-' }}</td>
+              <td>{{ $review->created_at ? $review->created_at->format('d M Y') : '-' }}</td>
             </tr>
           @empty
             <tr>
@@ -194,11 +194,17 @@
     chart: { type: 'line', height: 300 },
     series: [{
       name: 'Jumlah Pengguna',
-      data: @json($data) // array angka dari controller
+      data: @json($data ?? []),
     }],
     colors: ['#008FFB'],
     xaxis: {
-      categories: @json($labels) // array nama bulan dari controller
+      categories: @json($labels ?? []),
+    },
+    stroke: {
+      curve: 'smooth'
+    },
+    markers: {
+      size: 4
     }
   };
   var chart = new ApexCharts(document.querySelector("#grafik-pengguna"), options);

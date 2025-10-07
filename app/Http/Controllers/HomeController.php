@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Administrator;
 use App\Models\Pengguna;
-use App\Models\TempatWisata;
+use App\Models\Wisata; // ✅ diganti dari TempatWisata
 use App\Models\Penilaian;
 use Illuminate\Support\Facades\DB;
 
@@ -16,27 +16,33 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    // ==========================
+    // Halaman utama (home)
+    // ==========================
     public function index()
     {
         return view('home'); 
     }
 
+    // ==========================
+    // Dashboard utama
+    // ==========================
     public function dashboard()
     {
         // Hitung total data
-        $totalAdmin        = Administrator::count();
-        $totalPengguna     = Pengguna::count();
-        $totalTempatWisata = TempatWisata::count();
-        $totalPenilaian    = Penilaian::count();
+        $totalAdmin     = Administrator::count();
+        $totalPengguna  = Pengguna::count();
+        $totalWisata    = Wisata::count(); // ✅ diperbaiki
+        $totalPenilaian = Penilaian::count();
 
         // Data terbaru (ambil 5 terakhir)
         $latestAdmins   = Administrator::latest()->take(5)->get();
         $latestPengguna = Pengguna::latest()->take(5)->get();
-        $latestWisata   = TempatWisata::latest()->take(5)->get();
-        $latestReview   = Penilaian::with(['pengguna','tempatWisata']) // eager load biar tidak N+1 query
-                            ->latest()
-                            ->take(5)
-                            ->get();
+        $latestWisata   = Wisata::latest()->take(5)->get(); // ✅ diperbaiki
+        $latestReview   = Penilaian::with(['pengguna', 'wisata']) // ✅ ganti relasi ke 'wisata'
+                                ->latest()
+                                ->take(5)
+                                ->get();
 
         // Data grafik (jumlah pengguna per bulan)
         $grafikPengguna = Pengguna::selectRaw('COUNT(*) as total, MONTH(created_at) as bulan')
@@ -44,7 +50,7 @@ class HomeController extends Controller
             ->orderBy('bulan')
             ->pluck('total', 'bulan'); // hasil: [bulan => total]
 
-        // Mapping bulan
+        // Nama bulan
         $bulan = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
             4 => 'April', 5 => 'Mei', 6 => 'Juni',
@@ -61,10 +67,11 @@ class HomeController extends Controller
             $data[]   = $total;
         }
 
+        // Kirim ke view
         return view('dashboard.index', compact(
             'totalAdmin',
             'totalPengguna',
-            'totalTempatWisata',
+            'totalWisata',
             'totalPenilaian',
             'latestAdmins',
             'latestPengguna',
@@ -75,6 +82,9 @@ class HomeController extends Controller
         ));
     }
 
+    // ==========================
+    // Halaman tambahan (kartu)
+    // ==========================
     public function cards()
     {
         return view('dashboard.cards');

@@ -8,23 +8,33 @@ use Illuminate\Support\Facades\Hash;
 
 class PenggunaController extends Controller
 {
+    /**
+     * Tampilkan daftar seluruh pengguna.
+     */
     public function index()
     {
-        $penggunas = Pengguna::all();
-        return view('Pengguna.index', compact('penggunas'));
+        // Ambil semua data pengguna
+        $penggunas = Pengguna::latest()->get();
+        return view('Pengguna.index', compact('penggunas')); // ✅ folder 'pengguna' huruf kecil (konvensi Laravel)
     }
 
+    /**
+     * Form tambah pengguna baru.
+     */
     public function create()
     {
         return view('Pengguna.create');
     }
 
+    /**
+     * Simpan pengguna baru ke database.
+     */
     public function store(Request $request)
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:penggunas',
-            'password' => 'required|min:6',
+            'email'    => 'required|email|unique:penggunas,email',
+            'password' => 'required|string|min:6',
         ]);
 
         Pengguna::create([
@@ -34,20 +44,26 @@ class PenggunaController extends Controller
         ]);
 
         return redirect()->route('pengguna.index')
-            ->with('success', 'Pengguna berhasil ditambahkan!');
+            ->with('success', '✅ Pengguna berhasil ditambahkan.');
     }
 
+    /**
+     * Form edit pengguna.
+     */
     public function edit(Pengguna $pengguna)
     {
         return view('Pengguna.edit', compact('pengguna'));
     }
 
+    /**
+     * Update data pengguna.
+     */
     public function update(Request $request, Pengguna $pengguna)
     {
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:penggunas,email,' . $pengguna->id,
-            'password' => 'nullable|min:6',
+            'password' => 'nullable|string|min:6',
         ]);
 
         $data = $request->only(['name', 'email']);
@@ -58,14 +74,17 @@ class PenggunaController extends Controller
         $pengguna->update($data);
 
         return redirect()->route('pengguna.index')
-            ->with('success', 'Pengguna berhasil diupdate!');
+            ->with('success', '✏️ Data pengguna berhasil diperbarui.');
     }
 
+    /**
+     * Hapus data pengguna.
+     */
     public function destroy(Pengguna $pengguna)
     {
         $pengguna->delete();
 
         return redirect()->route('pengguna.index')
-            ->with('success', 'Pengguna berhasil dihapus!');
+            ->with('success', '🗑️ Pengguna berhasil dihapus.');
     }
 }

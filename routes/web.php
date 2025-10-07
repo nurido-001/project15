@@ -7,55 +7,64 @@ use App\Http\Controllers\WisataController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\PenilaianController; // ✅ tambahkan controller untuk review
+use App\Http\Controllers\PenilaianController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
 // ==========================
-// Halaman utama (landing page -> daftar wisata)
+// 🏠 Halaman Utama (Landing Page)
 // ==========================
 Route::get('/', function () {
-    return view('landing');
-});
+    return view('landing'); // tampilan utama (tanpa controller)
+})->name('landing');
 
 // ==========================
-// Autentikasi
+// 🔐 Autentikasi
 // ==========================
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// redirect register ke login (disable register)
+// Nonaktifkan register dengan redirect ke login
 Route::get('/register', fn() => redirect()->route('login'))->name('register');
 
 // ==========================
-// Dashboard (semua role)
+// 📊 Area Dashboard (Hanya untuk user login)
 // ==========================
 Route::middleware('auth')->group(function () {
+
+    // Dashboard umum
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/dashboard/cards', [HomeController::class, 'cards'])->name('dashboard.cards');
 
     // ==========================
-    // Wisata CRUD
+    // 🌄 CRUD Wisata
     // ==========================
     Route::resource('wisata', WisataController::class)
-        ->parameters(['wisata' => 'wisata']); // 🔥 Fix biar {wisata} bukan {wisatum}
+        ->parameters(['wisata' => 'wisata']); // pastikan parameter URL = {wisata}
 
     // ==========================
-    // Penilaian (Review)
+    // ⭐ Penilaian (Review Wisata)
     // ==========================
     Route::resource('penilaian', PenilaianController::class)->only([
         'store', 'destroy'
     ]);
 
     // ==========================
-    // Admin khusus
+    // 👑 Admin Area
     // ==========================
     Route::prefix('admin')->group(function () {
+
         // Dashboard Admin
         Route::get('/', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-        // Pengguna CRUD
+        // CRUD Pengguna
         Route::resource('pengguna', PenggunaController::class);
 
         // Grafik

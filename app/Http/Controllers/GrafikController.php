@@ -8,6 +8,6 @@ class GrafikController extends Controller
 {
     public function index()
     {
-        return view('admin.grafik'); 
+        return view('Admin.grafik'); 
     }
 }
