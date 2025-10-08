@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-
   <h3 class="mb-4 fw-bold">Dashboard Admin</h3>
 
   {{-- Statistik Singkat --}}
@@ -15,6 +14,7 @@
         </div>
       </div>
     </div>
+
     <div class="col-md-3">
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
@@ -23,14 +23,17 @@
         </div>
       </div>
     </div>
+
+    {{-- ✅ Ganti dari $totalTempatWisata jadi $totalWisata --}}
     <div class="col-md-3">
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
-          <h6 class="card-title">Tempat Wisata</h6>
-          <h3 class="fw-bold">{{ $totalTempatWisata ?? 0 }}</h3>
+          <h6 class="card-title">Wisata</h6>
+          <h3 class="fw-bold">{{ $totalWisata ?? 0 }}</h3>
         </div>
       </div>
     </div>
+
     <div class="col-md-3">
       <div class="card text-center shadow-sm border-0">
         <div class="card-body">
@@ -76,9 +79,7 @@
                   <td>{{ $p->created_at ? $p->created_at->format('d M Y') : '-' }}</td>
                 </tr>
               @empty
-                <tr>
-                  <td colspan="3" class="text-center">Belum ada data</td>
-                </tr>
+                <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
               @endforelse
             </tbody>
           </table>
@@ -109,9 +110,7 @@
                   <td>{{ $wisata->created_at ? $wisata->created_at->format('d M Y') : '-' }}</td>
                 </tr>
               @empty
-                <tr>
-                  <td colspan="3" class="text-center">Belum ada data</td>
-                </tr>
+                <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
               @endforelse
             </tbody>
           </table>
@@ -142,9 +141,7 @@
               <td>{{ $admin->created_at ? $admin->created_at->format('d M Y') : '-' }}</td>
             </tr>
           @empty
-            <tr>
-              <td colspan="3" class="text-center">Belum ada data</td>
-            </tr>
+            <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
           @endforelse
         </tbody>
       </table>
@@ -167,7 +164,8 @@
           </tr>
         </thead>
         <tbody>
-          @forelse($latestReview as $review)
+          {{-- ✅ Tambahkan pengecekan aman --}}
+          @forelse($latestReview ?? [] as $review)
             <tr>
               <td>{{ $review->pengguna->nama ?? '-' }}</td>
               <td>{{ $review->wisata->nama ?? '-' }}</td>
@@ -175,15 +173,12 @@
               <td>{{ $review->created_at ? $review->created_at->format('d M Y') : '-' }}</td>
             </tr>
           @empty
-            <tr>
-              <td colspan="4" class="text-center">Belum ada data</td>
-            </tr>
+            <tr><td colspan="4" class="text-center">Belum ada data</td></tr>
           @endforelse
         </tbody>
       </table>
     </div>
   </div>
-
 </div>
 @endsection
 
@@ -200,13 +195,10 @@
     xaxis: {
       categories: @json($labels ?? []),
     },
-    stroke: {
-      curve: 'smooth'
-    },
-    markers: {
-      size: 4
-    }
+    stroke: { curve: 'smooth' },
+    markers: { size: 4 }
   };
+
   var chart = new ApexCharts(document.querySelector("#grafik-pengguna"), options);
   chart.render();
 </script>

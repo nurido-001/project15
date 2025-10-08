@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
     {
         // --- Buat User Admin (untuk login Laravel default auth) ---
         User::updateOrCreate(
-            ['email' => 'admin@wisataku.com'],
+            ['email' => 'Admin@wisataku.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('123456789'),
                 'role' => 'admin',
             ]
         );

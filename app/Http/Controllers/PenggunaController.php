@@ -15,6 +15,7 @@ class PenggunaController extends Controller
     {
         // Ambil semua data pengguna
         $penggunas = Pengguna::latest()->get();
+
         return view('Pengguna.index', compact('penggunas')); // ✅ folder 'pengguna' huruf kecil (konvensi Laravel)
     }
 
@@ -32,14 +33,14 @@ class PenggunaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:penggunas,email',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:penggunas,email',
             'password' => 'required|string|min:6',
         ]);
 
         Pengguna::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
@@ -61,8 +62,8 @@ class PenggunaController extends Controller
     public function update(Request $request, Pengguna $pengguna)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:penggunas,email,' . $pengguna->id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:penggunas,email,'.$pengguna->id,
             'password' => 'nullable|string|min:6',
         ]);
 

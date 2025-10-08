@@ -4,28 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Administrator;
 use App\Models\Pengguna;
-use App\Models\Penilaian;
 use App\Models\Wisata;
+use App\Models\Penilaian;
+use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    // ==========================
-    // Halaman utama (home)
-    // ==========================
     public function index()
-    {
-        return view('home');
-    }
-
-    // ==========================
-    // Dashboard utama
-    // ==========================
-    public function dashboard()
     {
         // Hitung total data
         $totalAdmin = Administrator::count();
@@ -33,16 +18,11 @@ class HomeController extends Controller
         $totalWisata = Wisata::count();
         $totalPenilaian = Penilaian::count();
 
-        // Data terbaru (ambil 5 terakhir)
+        // Ambil data terbaru
         $latestAdmins = Administrator::latest()->take(5)->get();
         $latestPengguna = Pengguna::latest()->take(5)->get();
         $latestWisata = Wisata::latest()->take(5)->get();
-
-        // Review terbaru
-        $latestReview = Penilaian::with(['pengguna', 'wisata'])
-            ->latest()
-            ->take(5)
-            ->get();
+        $latestReview = Penilaian::with(['pengguna', 'wisata'])->latest()->take(5)->get();
 
         // Grafik pengguna per bulan
         $grafikPengguna = Pengguna::selectRaw('COUNT(*) as total, MONTH(created_at) as bulan')
@@ -50,7 +30,6 @@ class HomeController extends Controller
             ->orderBy('bulan')
             ->pluck('total', 'bulan');
 
-        // Nama bulan
         $bulan = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
             4 => 'April', 5 => 'Mei', 6 => 'Juni',
@@ -58,7 +37,6 @@ class HomeController extends Controller
             10 => 'Oktober', 11 => 'November', 12 => 'Desember',
         ];
 
-        // Siapkan data chart
         $labels = [];
         $data = [];
 
@@ -67,7 +45,6 @@ class HomeController extends Controller
             $data[] = $total;
         }
 
-        // Kirim semua data ke view
         return view('dashboard.index', compact(
             'totalAdmin',
             'totalPengguna',
@@ -76,17 +53,9 @@ class HomeController extends Controller
             'latestAdmins',
             'latestPengguna',
             'latestWisata',
-            'latestReview', 
+            'latestReview',
             'labels',
             'data'
         ));
-    }
-
-    // ==========================
-    // Halaman tambahan (kartu)
-    // ==========================
-    public function cards()
-    {
-        return view('dashboard.cards');
     }
 }

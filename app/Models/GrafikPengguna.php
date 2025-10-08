@@ -2,13 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class GrafikPengguna extends Model
 {
-    protected $fillable = ['judul', 'data', 'administrator_id'];
+    use HasFactory;
 
-    // Grafik dihasilkan oleh administrator
+    protected $table = 'grafik_penggunas'; 
+
+    protected $fillable = [
+        'judul',
+        'data',
+        'tipe',              
+        'periode',           
+        'administrator_id',  
+    ];
+
+    /**
+     * 
+     */
     public function administrator()
     {
         return $this->belongsTo(Administrator::class);
