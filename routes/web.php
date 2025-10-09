@@ -22,42 +22,69 @@ Route::get('/', function () {
     return view('landing'); // tampilan utama (tanpa controller)
 })->name('landing');
 
+
 // ==========================
 // 🔐 Autentikasi
 // ==========================
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::controller(LoginController::class)->group(function () {
+    Route::get('/login', 'showLoginForm')->name('login');
+    Route::post('/login', 'login')->name('login.post');
+    Route::post('/logout', 'logout')->name('logout');
+});
 
 // Nonaktifkan register (redirect ke login)
 Route::get('/register', fn() => redirect()->route('login'))->name('register');
 
+
 // ==========================
-// 📊 Area Dashboard (sementara tanpa middleware agar bisa dites)
+// 📊 Area Dashboard (Sementara Tanpa Middleware untuk Tes)
 // ==========================
 
+// ⚠️ Saat produksi nanti, aktifkan middleware 'auth' di bawah ini.
 // Route::middleware('auth')->group(function () {
 
-    // Dashboard umum
-    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/dashboard/cards', [HomeController::class, 'cards'])->name('dashboard.cards');
+    // === Dashboard Umum ===
+    Route::controller(HomeController::class)->group(function () {
+        Route::get('/dashboard', 'dashboard')->name('dashboard');
+        Route::get('/home', 'index')->name('home');
+        Route::get('/dashboard/cards', 'cards')->name('dashboard.cards');
+    });
 
-    // 🌄 CRUD Wisata
+    // === 🌄 CRUD Wisata ===
     Route::resource('wisata', WisataController::class)
-        ->parameters(['wisata' => 'wisata']);
+        ->parameters(['wisata' => 'wisata'])
+        ->names([
+            'index' => 'wisata.index',
+            'create' => 'wisata.create',
+            'store' => 'wisata.store',
+            'show' => 'wisata.show',
+            'edit' => 'wisata.edit',
+            'update' => 'wisata.update',
+            'destroy' => 'wisata.destroy',
+        ]);
 
-    // ⭐ Penilaian (Review Wisata)
-    Route::resource('penilaian', PenilaianController::class)->only([
-        'store', 'destroy'
-    ]);
+    // === ⭐ Penilaian (Review Wisata) ===
+    Route::controller(PenilaianController::class)->group(function () {
+        // untuk form review di wisata/show.blade.php
+        Route::post('/penilaian', 'store')->name('penilaian.store');
 
-    // 👑 Admin Area
+        // untuk hapus review
+        Route::delete('/penilaian/{id}', 'destroy')->name('penilaian.destroy');
+
+        // opsional: admin ingin lihat semua penilaian
+        Route::get('/admin/penilaian', 'index')->name('penilaian.index');
+    });
+
+    // === 👑 Admin Area ===
     Route::prefix('admin')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+        // CRUD pengguna
         Route::resource('pengguna', PenggunaController::class);
+
+        // Halaman grafik
         Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
     });
 
-// });
+// }); // END middleware('auth')

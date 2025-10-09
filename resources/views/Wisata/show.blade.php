@@ -45,9 +45,11 @@
                     {{-- Form Tambah Review --}}
                     <hr>
                     <h5 class="mt-4">Tambah Review</h5>
+
+                    {{-- ⚠️ ganti name hidden input sesuai controller (wisata_id) --}}
                     <form action="{{ route('penilaian.store') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="tempat_wisata_id" value="{{ $wisata->id }}">
+                        <input type="hidden" name="wisata_id" value="{{ $wisata->id }}">
 
                         <div class="mb-3">
                             <label for="rating">Rating</label>
@@ -62,7 +64,7 @@
 
                         <div class="mb-3">
                             <label for="komentar">Komentar</label>
-                            <textarea name="komentar" id="komentar" class="form-control" rows="3"></textarea>
+                            <textarea name="komentar" id="komentar" class="form-control" rows="3" maxlength="500"></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary">
@@ -112,7 +114,10 @@
                         <a href="{{ route('wisata.edit', $wisata->id) }}" class="btn btn-outline-warning">
                             <i class="ti ti-edit"></i> Edit
                         </a>
-                        <form action="{{ route('wisata.destroy', $wisata->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                        <form action="{{ route('wisata.destroy', $wisata->id) }}" 
+                              method="POST" 
+                              class="d-inline" 
+                              onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger">

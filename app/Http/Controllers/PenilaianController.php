@@ -15,21 +15,44 @@ class PenilaianController extends Controller
     }
 
     /**
+     * Tampilkan daftar semua penilaian (opsional untuk admin)
+     */
+    public function index()
+    {
+        // Jika admin: tampilkan semua penilaian, jika bukan: hanya miliknya
+        $user = Auth::user();
+        $penilaians = ($user->is_admin ?? false)
+            ? Penilaian::with(['pengguna', 'wisata'])->latest()->paginate(10)
+            : Penilaian::where('pengguna_id', $user->id)->with('wisata')->latest()->paginate(10);
+
+        return view('penilaian.index', compact('penilaians'));
+    }
+
+    /**
      * Simpan review baru
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'wisata_id' => 'required|exists:wisatas,id', // ✅ ganti nama field-nya
+        $validated = $request->validate([
+            'wisata_id' => 'required|exists:wisatas,id',
             'rating'    => 'required|integer|min:1|max:5',
             'komentar'  => 'nullable|string|max:500',
         ]);
 
+        // Cegah pengguna menilai wisata yang sama lebih dari 1x
+        $existing = Penilaian::where('pengguna_id', Auth::id())
+            ->where('wisata_id', $validated['wisata_id'])
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('error', 'Anda sudah memberi penilaian untuk wisata ini.');
+        }
+
         Penilaian::create([
-            'pengguna_id' => Auth::id(), // otomatis pakai user login
-            'wisata_id'   => $request->wisata_id, // ✅ ganti field
-            'rating'      => $request->rating,
-            'komentar'    => $request->komentar,
+            'pengguna_id' => Auth::id(),
+            'wisata_id'   => $validated['wisata_id'],
+            'rating'      => $validated['rating'],
+            'komentar'    => $validated['komentar'],
         ]);
 
         return redirect()->back()->with('success', 'Review berhasil ditambahkan!');

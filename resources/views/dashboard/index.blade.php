@@ -2,73 +2,63 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-  <h3 class="mb-4 fw-bold">Dashboard Admin</h3>
+  {{-- Judul --}}
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-primary fade-in">Selamat Datang di Dashboard WisataKu</h2>
+    <p class="text-muted">Pantau data wisata, pengguna, dan penilaian terbaru di satu tempat.</p>
+  </div>
 
   {{-- Statistik Singkat --}}
   <div class="row g-4 mb-4">
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="card-title">Total Admin</h6>
-          <h3 class="fw-bold">{{ $totalAdmin ?? 0 }}</h3>
-        </div>
-      </div>
-    </div>
+    @php
+      $stats = [
+        ['label' => 'Total Admin', 'value' => $totalAdmin ?? 0, 'icon' => 'ti ti-user-shield', 'color' => 'primary'],
+        ['label' => 'Total Pengguna', 'value' => $totalPengguna ?? 0, 'icon' => 'ti ti-users', 'color' => 'success'],
+        ['label' => 'Total Wisata', 'value' => $totalWisata ?? 0, 'icon' => 'ti ti-map-2', 'color' => 'info'],
+        ['label' => 'Total Penilaian', 'value' => $totalPenilaian ?? 0, 'icon' => 'ti ti-star', 'color' => 'warning'],
+      ];
+    @endphp
 
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="card-title">Total Pengguna</h6>
-          <h3 class="fw-bold">{{ $totalPengguna ?? 0 }}</h3>
+    @foreach($stats as $s)
+      <div class="col-md-3 col-sm-6">
+        <div class="card shadow-sm border-0 hover-card fade-up">
+          <div class="card-body text-center">
+            <div class="rounded-circle bg-{{ $s['color'] }} bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-2" style="width:50px;height:50px;">
+              <i class="{{ $s['icon'] }} text-{{ $s['color'] }} fs-4"></i>
+            </div>
+            <h6 class="card-title text-muted">{{ $s['label'] }}</h6>
+            <h3 class="fw-bold text-{{ $s['color'] }}">{{ $s['value'] }}</h3>
+          </div>
         </div>
       </div>
-    </div>
-
-    {{-- ✅ Ganti dari $totalTempatWisata jadi $totalWisata --}}
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="card-title">Wisata</h6>
-          <h3 class="fw-bold">{{ $totalWisata ?? 0 }}</h3>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="card text-center shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="card-title">Penilaian</h6>
-          <h3 class="fw-bold">{{ $totalPenilaian ?? 0 }}</h3>
-        </div>
-      </div>
-    </div>
+    @endforeach
   </div>
 
   {{-- Grafik Pengguna --}}
-  <div class="card mb-4 shadow-sm border-0">
-    <div class="card-header bg-light fw-bold">
-      <h5 class="mb-0 text-primary">Grafik Pengguna per Bulan</h5>
+  <div class="card mb-4 shadow-sm border-0 fade-up">
+    <div class="card-header bg-light fw-bold d-flex align-items-center">
+      <i class="ti ti-chart-line text-primary me-2"></i> Grafik Pengguna per Bulan
     </div>
     <div class="card-body">
-      <div id="grafik-pengguna"></div>
+      <div id="grafik-pengguna" style="min-height:300px;"></div>
     </div>
   </div>
 
   {{-- Data Terbaru --}}
-  <div class="row">
+  <div class="row fade-up">
     {{-- Pengguna Terbaru --}}
     <div class="col-md-6">
       <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-light fw-bold">
-          <h5 class="mb-0 text-primary">Pengguna Terbaru</h5>
+        <div class="card-header bg-light fw-bold text-primary">
+          <i class="ti ti-users me-2"></i>Pengguna Terbaru
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover table-sm mb-0">
+          <table class="table table-hover table-striped mb-0">
             <thead>
               <tr>
                 <th>Nama</th>
                 <th>Email</th>
-                <th>Created At</th>
+                <th>Tanggal</th>
               </tr>
             </thead>
             <tbody>
@@ -79,7 +69,7 @@
                   <td>{{ $p->created_at ? $p->created_at->format('d M Y') : '-' }}</td>
                 </tr>
               @empty
-                <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
+                <tr><td colspan="3" class="text-center text-muted">Belum ada data</td></tr>
               @endforelse
             </tbody>
           </table>
@@ -90,27 +80,27 @@
     {{-- Wisata Terbaru --}}
     <div class="col-md-6">
       <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-light fw-bold">
-          <h5 class="mb-0 text-primary">Wisata Terbaru</h5>
+        <div class="card-header bg-light fw-bold text-primary">
+          <i class="ti ti-map-pin me-2"></i>Wisata Terbaru
         </div>
         <div class="table-responsive">
-          <table class="table table-striped table-hover table-sm mb-0">
+          <table class="table table-hover table-striped mb-0">
             <thead>
               <tr>
                 <th>Nama</th>
                 <th>Lokasi</th>
-                <th>Created At</th>
+                <th>Tanggal</th>
               </tr>
             </thead>
             <tbody>
-              @forelse($latestWisata as $wisata)
+              @forelse($latestWisata as $w)
                 <tr>
-                  <td>{{ $wisata->nama ?? '-' }}</td>
-                  <td>{{ $wisata->lokasi ?? '-' }}</td>
-                  <td>{{ $wisata->created_at ? $wisata->created_at->format('d M Y') : '-' }}</td>
+                  <td>{{ $w->nama ?? '-' }}</td>
+                  <td>{{ $w->lokasi ?? '-' }}</td>
+                  <td>{{ $w->created_at ? $w->created_at->format('d M Y') : '-' }}</td>
                 </tr>
               @empty
-                <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
+                <tr><td colspan="3" class="text-center text-muted">Belum ada data</td></tr>
               @endforelse
             </tbody>
           </table>
@@ -119,64 +109,71 @@
     </div>
   </div>
 
-  {{-- Admin Terbaru --}}
-  <div class="card mb-4 shadow-sm border-0">
-    <div class="card-header bg-light fw-bold">
-      <h5 class="mb-0 text-primary">Admin Terbaru</h5>
+  {{-- Review & Admin Terbaru --}}
+  <div class="row fade-up">
+    <div class="col-md-6">
+      <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-light fw-bold text-primary">
+          <i class="ti ti-user-shield me-2"></i>Admin Terbaru
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Tanggal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse($latestAdmins as $a)
+                <tr>
+                  <td>{{ $a->nama ?? '-' }}</td>
+                  <td>{{ $a->email ?? '-' }}</td>
+                  <td>{{ $a->created_at ? $a->created_at->format('d M Y') : '-' }}</td>
+                </tr>
+              @empty
+                <tr><td colspan="3" class="text-center text-muted">Belum ada data</td></tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <div class="table-responsive">
-      <table class="table table-striped table-hover table-sm mb-0">
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Email</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse($latestAdmins as $admin)
-            <tr>
-              <td>{{ $admin->nama ?? '-' }}</td>
-              <td>{{ $admin->email ?? '-' }}</td>
-              <td>{{ $admin->created_at ? $admin->created_at->format('d M Y') : '-' }}</td>
-            </tr>
-          @empty
-            <tr><td colspan="3" class="text-center">Belum ada data</td></tr>
-          @endforelse
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-  {{-- Penilaian Terbaru --}}
-  <div class="card mb-4 shadow-sm border-0">
-    <div class="card-header bg-light fw-bold">
-      <h5 class="mb-0 text-primary">Penilaian Terbaru</h5>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-striped table-hover table-sm mb-0">
-        <thead>
-          <tr>
-            <th>Pengguna</th>
-            <th>Wisata</th>
-            <th>Rating</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{-- ✅ Tambahkan pengecekan aman --}}
-          @forelse($latestReview ?? [] as $review)
-            <tr>
-              <td>{{ $review->pengguna->nama ?? '-' }}</td>
-              <td>{{ $review->wisata->nama ?? '-' }}</td>
-              <td>{{ $review->rating ?? '-' }}</td>
-              <td>{{ $review->created_at ? $review->created_at->format('d M Y') : '-' }}</td>
-            </tr>
-          @empty
-            <tr><td colspan="4" class="text-center">Belum ada data</td></tr>
-          @endforelse
-        </tbody>
-      </table>
+    {{-- Penilaian Terbaru --}}
+    <div class="col-md-6">
+      <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-light fw-bold text-primary">
+          <i class="ti ti-star me-2"></i>Penilaian Terbaru
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Pengguna</th>
+                <th>Wisata</th>
+                <th>Rating</th>
+                <th>Tanggal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{-- @forelse($latestReview as $r)
+                <tr>
+                  <td>{{ $r->pengguna->nama ?? '-' }}</td>
+                  <td>{{ $r->wisata->nama ?? '-' }}</td>
+                  <td>
+                    <span class="text-warning">{{ str_repeat('⭐', $r->rating) }}</span>
+                  </td>
+                  <td>{{ $r->created_at ? $r->created_at->format('d M Y') : '-' }}</td>
+                </tr>
+              @empty
+                <tr><td colspan="4" class="text-center text-muted">Belum ada data</td></tr>
+              @endforelse --}}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -185,21 +182,28 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
+  // Grafik Pengguna
   var options = {
-    chart: { type: 'line', height: 300 },
+    chart: { type: 'line', height: 300, animations: { easing: 'easeinout', speed: 800 }},
     series: [{
       name: 'Jumlah Pengguna',
       data: @json($data ?? []),
     }],
     colors: ['#008FFB'],
-    xaxis: {
-      categories: @json($labels ?? []),
-    },
-    stroke: { curve: 'smooth' },
-    markers: { size: 4 }
+    xaxis: { categories: @json($labels ?? []), title: { text: 'Bulan' } },
+    yaxis: { title: { text: 'Jumlah' } },
+    stroke: { curve: 'smooth', width: 3 },
+    markers: { size: 4 },
+    grid: { borderColor: '#eee' }
   };
-
-  var chart = new ApexCharts(document.querySelector("#grafik-pengguna"), options);
-  chart.render();
+  new ApexCharts(document.querySelector("#grafik-pengguna"), options).render();
 </script>
+
+<style>
+  .fade-in { animation: fadeIn 1.2s ease-in-out; }
+  .fade-up { animation: fadeUp 0.9s ease-in-out; }
+  .hover-card:hover { transform: translateY(-4px); transition: .3s; box-shadow: 0 6px 18px rgba(0,0,0,.1); }
+  @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+  @keyframes fadeUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+</style>
 @endpush
