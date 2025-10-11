@@ -9,14 +9,27 @@ use Illuminate\Support\Facades\Storage;
 class WisataController extends Controller
 {
     /**
-     * Tampilkan daftar semua tempat wisata
+     * Tampilkan daftar semua tempat wisata + fitur pencarian
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Gunakan pagination agar lebih ringan
-        $wisatas = Wisata::latest()->paginate(9);
+        $search = $request->input('search');
 
-        return view('Wisata.index', compact('wisatas'));
+        $wisatas = Wisata::when($search, function ($query, $search) {
+                $query->where('nama', 'like', "%{$search}%")
+                      ->orWhere('lokasi', 'like', "%{$search}%")
+                      ->orWhere('deskripsi', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(9)
+            ->appends(['search' => $search]); // agar pagination mempertahankan keyword
+
+        // Pesan jika hasil pencarian kosong
+        $notFound = ($wisatas->isEmpty() && $search)
+            ? "😞 Maaf, tidak ada tempat wisata yang cocok dengan kata kunci: '{$search}'."
+            : null;
+
+        return view('Wisata.index', compact('wisatas', 'search', 'notFound'));
     }
 
     /**
@@ -40,7 +53,6 @@ class WisataController extends Controller
             'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Upload foto jika ada
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('wisata', 'public');
         }
@@ -79,7 +91,6 @@ class WisataController extends Controller
             'foto'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Jika upload foto baru → hapus lama & simpan baru
         if ($request->hasFile('foto')) {
             if ($wisata->foto && Storage::disk('public')->exists($wisata->foto)) {
                 Storage::disk('public')->delete($wisata->foto);
@@ -97,7 +108,6 @@ class WisataController extends Controller
      */
     public function destroy(Wisata $wisata)
     {
-        // Hapus foto dari storage jika ada
         if ($wisata->foto && Storage::disk('public')->exists($wisata->foto)) {
             Storage::disk('public')->delete($wisata->foto);
         }

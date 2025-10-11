@@ -9,15 +9,17 @@ class Penilaian extends Model
 {
     use HasFactory;
 
+    protected $table = 'penilaians'; // ✅ pastikan tabelnya benar
+
     protected $fillable = [
-        'rating',
-        'komentar',
-        'pengguna_id',
-        'wisata_id', // ✅ diganti dari tempat_wisata_id
+        'wisata_id',     // ID wisata yang dinilai
+        'pengguna_id',   // ID pengguna yang memberi penilaian
+        'rating',        // nilai rating
+        'komentar',      // teks komentar
     ];
 
     /**
-     * Relasi: review diberikan oleh pengguna
+     * Relasi: Penilaian ini diberikan oleh seorang pengguna
      */
     public function pengguna()
     {
@@ -25,7 +27,7 @@ class Penilaian extends Model
     }
 
     /**
-     * Relasi: review untuk wisata
+     * Relasi: Penilaian ini untuk sebuah tempat wisata
      */
     public function wisata()
     {

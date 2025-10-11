@@ -13,13 +13,17 @@ use App\Http\Controllers\PenilaianController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
+|
+| Ini adalah file route utama aplikasi Wisataku.
+| Pastikan semua route mengarah ke controller yang sesuai.
+|
 */
 
 // ==========================
 // 🏠 Halaman Utama (Landing Page)
 // ==========================
 Route::get('/', function () {
-    return view('landing'); // tampilan utama (tanpa controller)
+    return view('landing'); // Tampilan utama tanpa controller
 })->name('landing');
 
 
@@ -37,54 +41,56 @@ Route::get('/register', fn() => redirect()->route('login'))->name('register');
 
 
 // ==========================
-// 📊 Area Dashboard (Sementara Tanpa Middleware untuk Tes)
+// 📊 Area Dashboard (Tanpa middleware dulu)
 // ==========================
 
-// ⚠️ Saat produksi nanti, aktifkan middleware 'auth' di bawah ini.
-// Route::middleware('auth')->group(function () {
+// ⚠️ Saat produksi nanti, aktifkan middleware('auth')
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/home', 'index')->name('home');
+    Route::get('/dashboard/cards', 'cards')->name('dashboard.cards');
+});
 
-    // === Dashboard Umum ===
-    Route::controller(HomeController::class)->group(function () {
-        Route::get('/dashboard', 'dashboard')->name('dashboard');
-        Route::get('/home', 'index')->name('home');
-        Route::get('/dashboard/cards', 'cards')->name('dashboard.cards');
-    });
 
-    // === 🌄 CRUD Wisata ===
-    Route::resource('wisata', WisataController::class)
-        ->parameters(['wisata' => 'wisata'])
-        ->names([
-            'index' => 'wisata.index',
-            'create' => 'wisata.create',
-            'store' => 'wisata.store',
-            'show' => 'wisata.show',
-            'edit' => 'wisata.edit',
-            'update' => 'wisata.update',
-            'destroy' => 'wisata.destroy',
-        ]);
+// ==========================
+// 🌄 CRUD Tempat Wisata
+// ==========================
+Route::resource('wisata', WisataController::class)
+    ->parameters(['wisata' => 'wisata'])
+    ->names([
+        'index' => 'wisata.index',
+        'create' => 'wisata.create',
+        'store' => 'wisata.store',
+        'show' => 'wisata.show',
+        'edit' => 'wisata.edit',
+        'update' => 'wisata.update',
+        'destroy' => 'wisata.destroy',
+    ]);
 
-    // === ⭐ Penilaian (Review Wisata) ===
-    Route::controller(PenilaianController::class)->group(function () {
-        // untuk form review di wisata/show.blade.php
-        Route::post('/penilaian', 'store')->name('penilaian.store');
+// 🔍 Route tambahan untuk fitur pencarian wisata
+Route::get('/wisata/search', [WisataController::class, 'search'])->name('wisata.search');
 
-        // untuk hapus review
-        Route::delete('/penilaian/{id}', 'destroy')->name('penilaian.destroy');
 
-        // opsional: admin ingin lihat semua penilaian
-        Route::get('/admin/penilaian', 'index')->name('penilaian.index');
-    });
+// ==========================
+// ⭐ Penilaian (Review Wisata)
+// ==========================
+Route::controller(PenilaianController::class)->group(function () {
+    Route::post('/penilaian', 'store')->name('penilaian.store');
+    Route::delete('/penilaian/{id}', 'destroy')->name('penilaian.destroy');
+    Route::get('/admin/penilaian', 'index')->name('penilaian.index');
+});
 
-    // === 👑 Admin Area ===
-    Route::prefix('admin')->group(function () {
-        Route::get('/', [AdminController::class, 'index'])->name('admin.index');
-        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-        // CRUD pengguna
-        Route::resource('pengguna', PenggunaController::class);
+// ==========================
+// 👑 Admin Area
+// ==========================
+Route::prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-        // Halaman grafik
-        Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
-    });
+    // CRUD Pengguna
+    Route::resource('pengguna', PenggunaController::class);
 
-// }); // END middleware('auth')
+    // Halaman Grafik
+    Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
+});

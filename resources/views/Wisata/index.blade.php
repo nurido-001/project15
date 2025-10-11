@@ -48,21 +48,27 @@
     }
 
     .btn-outline-warning {
-        border-color: #079313;
-        color: #217108;
+        border-color: #ff9800;
+        color: #ff9800;
     }
     .btn-outline-warning:hover {
-        background: #6804eb;
-        color: rgb(43, 0, 255);
+        background: #ff9800;
+        color: white;
     }
 
     .btn-outline-danger {
-        border-color: #240ba4;
-        color: #6a03a2;
+        border-color: #e91e63;
+        color: #e91e63;
     }
     .btn-outline-danger:hover {
-        background: #560dff;
+        background: #e91e63;
         color: white;
+    }
+
+    /* === Search box === */
+    .search-box {
+        max-width: 420px;
+        margin-bottom: 1.5rem;
     }
 </style>
 
@@ -79,6 +85,22 @@
         </div>
     @endif
 
+    {{-- 🔍 Pencarian --}}
+    <form action="{{ route('wisata.index') }}" method="GET" class="d-flex search-box">
+        <input type="text" name="search" value="{{ request('search') }}" 
+               class="form-control me-2" placeholder="Cari wisata (nama, lokasi, deskripsi)...">
+        <button class="btn btn-success" type="submit">Cari</button>
+    </form>
+
+    {{-- Info hasil pencarian --}}
+    @if(isset($notFound))
+        <div class="alert alert-warning text-center">{{ $notFound }}</div>
+    @elseif(request('search'))
+        <div class="alert alert-info text-center">
+            Menampilkan hasil pencarian untuk: <strong>{{ request('search') }}</strong>
+        </div>
+    @endif
+
     {{-- Tombol tambah data --}}
     <div class="mb-4">
         <a href="{{ route('wisata.create') }}" class="btn btn-tambah">
@@ -91,19 +113,11 @@
         @forelse ($wisatas as $w)
             <div class="col-md-4 col-sm-6">
                 <div class="card shadow-sm border-0 h-100">
-
                     {{-- Foto --}}
-                    @if($w->foto)
-                        <img src="{{ asset('storage/' . $w->foto) }}" 
-                             class="card-img-top" 
-                             alt="{{ $w->nama }}" 
-                             style="height:200px; object-fit:cover; border-top-left-radius:16px; border-top-right-radius:16px;">
-                    @else
-                        <img src="{{ asset('default/opo1.jpg') }}" 
-                             class="card-img-top" 
-                             alt="Default Image" 
-                             style="height:200px; object-fit:cover; border-top-left-radius:16px; border-top-right-radius:16px;">
-                    @endif
+                    <img src="{{ $w->foto ? asset('storage/' . $w->foto) : asset('default/opo1.jpg') }}"
+                         class="card-img-top"
+                         alt="{{ $w->nama }}"
+                         style="height:200px; object-fit:cover; border-top-left-radius:16px; border-top-right-radius:16px;">
 
                     {{-- Isi card --}}
                     <div class="card-body">
@@ -134,15 +148,17 @@
                 </div>
             </div>
         @empty
-            <div class="col-12 text-center">
-                <p class="text-muted">Belum ada data wisata.</p>
-            </div>
+            @if(!isset($notFound))
+                <div class="col-12 text-center">
+                    <p class="text-muted">Belum ada data wisata.</p>
+                </div>
+            @endif
         @endforelse
     </div>
 
     {{-- Pagination --}}
     <div class="mt-4">
-        {{ $wisatas->links() }}
+        {{ $wisatas->appends(['search' => request('search')])->links() }}
     </div>
 </div>
 @endsection

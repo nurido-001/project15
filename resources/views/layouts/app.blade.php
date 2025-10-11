@@ -1,201 +1,254 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
+<html lang="id">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin {{ config('app.name', 'Laravel') }}</title>
-  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <title>{{ config('app.name', 'Wisataku') }}</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
-  <!-- Vuexy / Core CSS (external) -->
-  <link rel="stylesheet" href="https://demos.pixinvent.com/vuexy-html-admin-template/assets/vendor/css/core.css">
-  <link rel="stylesheet" href="https://demos.pixinvent.com/vuexy-html-admin-template/assets/vendor/css/theme-default.css">
-  <link rel="stylesheet" href="https://demos.pixinvent.com/vuexy-html-admin-template/assets/vendor/css/demo.css">
-  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
 
   <style>
-    /* ---------- Base ---------- */
-    html,body { height:100%; margin:0; padding:0; }
     body {
-      position: relative;
-      min-height: 100vh;
-      font-family: 'Nunito', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color: #e8f0ff;
+      font-family: 'Poppins', sans-serif;
+      color: #243b2f;
       overflow-x: hidden;
-      background: radial-gradient(circle at 10% 20%, #0d1117 0%, #020b20 80%);
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      transition: opacity 0.5s ease;
+      position: relative;
+      z-index: 0;
     }
 
-    /* ---------- Aurora (background glow) ---------- */
-    .aurora {
+    /* Background utama */
+    body::before {
+      content: "";
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(600px at 20% 30%, rgba(0,255,255,0.18), transparent 15%),
-        radial-gradient(800px at 80% 70%, rgba(255,0,150,0.12), transparent 15%),
-        radial-gradient(700px at 50% 40%, rgba(0,255,128,0.10), transparent 18%);
-      filter: blur(60px);
-      z-index: 0;
+      background: url('/default/opo1.jpg') center/cover no-repeat;
+      z-index: -1;
+      filter: brightness(0.9) blur(1px);
+      opacity: 0.95;
+    }
+
+    /* Overlay transisi dengan efek fade + zoom */
+    #transition-overlay {
+      position: fixed;
+      inset: 0;
+      background: url('/default/opo2.jpg') center/cover no-repeat;
+      z-index: 9999;
+      opacity: 0;
       pointer-events: none;
-      animation: auroraMove 18s infinite alternate ease-in-out;
-      transform-origin: center;
-    }
-    @keyframes auroraMove {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(-30px) rotate(2deg); }
+      transform: scale(1);
+      transition: opacity 0.7s ease, transform 1.2s ease;
     }
 
-    /* ---------- Particles (light dots) ---------- */
-    .particles { position: fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
-    .particle {
-      position:absolute; width:4px; height:4px; border-radius:50%;
-      background: rgba(0,255,255,0.85);
-      opacity:0.45; transform: translateY(0);
-      animation: particleFloat linear infinite;
-    }
-    @keyframes particleFloat {
-      0% { transform: translateY(110vh) scale(0.6); opacity:0; }
-      10% { opacity:1; }
-      90% { opacity:1; }
-      100% { transform: translateY(-10vh) scale(1.1); opacity:0; }
+    #transition-overlay.active {
+      opacity: 1;
+      transform: scale(1.08); /* efek zoom lembut */
+      pointer-events: all;
     }
 
-    /* ---------- Sidebar (glass) ---------- */
+    /* Sidebar */
     .sidebar {
       position: fixed;
-      top: 0; left: 0;
-      width: 250px; height: 100vh;
-      background: rgba(12,18,28,0.45);
-      -webkit-backdrop-filter: blur(14px);
-      backdrop-filter: blur(14px);
-      border-right: 1px solid rgba(255,255,255,0.04);
-      padding: 1.25rem;
-      z-index: 50;
-      display:flex; flex-direction:column; justify-content:space-between;
-      box-shadow: 4px 0 18px rgba(0,0,0,0.45);
-    }
-    .sidebar h4 { color:#00e5ff; text-shadow:0 0 8px rgba(0,229,255,0.12); margin:0 0 1rem; font-weight:700; letter-spacing:0.6px; }
-
-    .sidebar .nav-link {
-      display:block; color:#cfe8ff; text-decoration:none; padding:10px 12px; border-radius:8px; margin-bottom:6px;
-      transition: none; /* NO hover shifting per request */
-    }
-    /* active only (no hover change) */
-    .sidebar .nav-link.active {
-      background: rgba(0,229,255,0.12);
-      color:#00e5ff;
-      box-shadow: 0 0 8px rgba(0,229,255,0.08);
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 250px;
+      background: linear-gradient(180deg, #00a86b, #2ecc71, #f1c40f);
+      padding-top: 1rem;
+      box-shadow: 4px 0 25px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
     }
 
-    /* logout button style */
-    .sidebar form { margin:0; }
-    .sidebar .logout-btn { display:block; padding:10px 12px; background:transparent; border:0; color:#ff6b6b; text-align:left; cursor:pointer; }
+    .sidebar .app-brand {
+      text-align: center;
+      font-weight: 700;
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 1.5rem;
+    }
 
-    /* ---------- Content ---------- */
-    .content {
+    .sidebar .menu-item {
+      margin: 8px 12px;
+    }
+
+    .sidebar .menu-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 500;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.12);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar .menu-link:hover,
+    .sidebar .menu-item.active .menu-link {
+      background: linear-gradient(90deg, #f1c40f, #27ae60, #16a085);
+      transform: translateX(6px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Navbar */
+    .navbar-custom {
+      background: linear-gradient(90deg, #00bcd4, #2ecc71, #f1c40f);
+      color: #004d40;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(6px);
+    }
+
+    .navbar-custom .navbar-brand {
+      font-weight: 700;
+      color: #004d40;
+    }
+
+    .navbar-custom .nav-link {
+      color: #004d40;
+      font-weight: 500;
+      margin: 0 8px;
+      transition: 0.3s;
+    }
+
+    .navbar-custom .nav-link:hover {
+      color: #0d47a1;
+      transform: scale(1.05);
+    }
+
+    /* Search box */
+    .search-box input {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 25px;
+      color: #00332b;
+      padding: 6px 15px;
+      width: 230px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 188, 212, 0.6);
+      outline: none;
+      width: 270px;
+    }
+
+    .search-box button {
+      border: none;
+      background: linear-gradient(135deg, #00bcd4, #f1c40f);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .search-box button:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 10px rgba(0, 188, 212, 0.6);
+    }
+
+    /* Konten utama */
+    .main-content {
       margin-left: 250px;
       padding: 2rem;
       min-height: 100vh;
-      position: relative;
-      z-index: 5;
-    }
-
-    /* ---------- Card ---------- */
-    .card {
-      background: rgba(255,255,255,0.06);
-      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px 0 0 0;
+      background: rgba(255, 255, 255, 0.35);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.04);
-      color: #e8f8ff;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+      animation: fadeIn 0.8s ease;
     }
 
-    /* small animation for entrance */
-    .fade-in { animation: fadeIn 900ms ease both; }
-    @keyframes fadeIn { from { opacity:0; transform: translateY(10px);} to {opacity:1; transform:none;} }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    /* ---------- Footer ---------- */
-    footer { color:#9fb6cf; text-align:center; padding:1rem 0; font-size:0.9rem; margin-top:1.5rem; border-top:1px solid rgba(255,255,255,0.02); }
+    /* Tombol */
+    .btn {
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
 
-    /* ---------- Accessibility: reduce motion ---------- */
-    @media (prefers-reduced-motion: reduce) {
-      .aurora, .particles, .card, .fade-in { animation: none !important; transition: none !important; }
+    .btn-tambah {
+      background: linear-gradient(135deg, #f1c40f, #ffb300);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-edit {
+      background: linear-gradient(135deg, #00bcd4, #009688);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-hapus {
+      background: linear-gradient(135deg, #ff4b2b, #ff6f61);
+      color: #fff;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 
 <body>
-  {{-- Aurora & Particles (static handful for perf, extended by JS if needed) --}}
-  <div class="aurora" aria-hidden="true"></div>
-  <div class="particles" aria-hidden="true">
-    <div class="particle" style="left:8%; animation-duration:12s; animation-delay:0s;"></div>
-    <div class="particle" style="left:25%; animation-duration:14s; animation-delay:3s;"></div>
-    <div class="particle" style="left:42%; animation-duration:11s; animation-delay:1s;"></div>
-    <div class="particle" style="left:61%; animation-duration:13s; animation-delay:4s;"></div>
-    <div class="particle" style="left:78%; animation-duration:15s; animation-delay:2s;"></div>
-  </div>
+  <div id="transition-overlay"></div>
 
-  <div class="layout-wrapper layout-content-navbar">
-    <div class="layout-container">
+  @include('layouts.sidebar')
 
-      {{-- include sidebar only if it exists to avoid view errors --}}
-      @if (view()->exists('layouts.sidebar'))
-        @include('layouts.sidebar')
-      @endif
+  <nav class="navbar navbar-expand-lg navbar-custom fixed-top" style="margin-left:250px;">
+    <div class="container-fluid">
+      <span class="navbar-brand">Dashboard Wisataku</span>
 
-      <div class="layout-page">
-        @if (view()->exists('layouts.navbar'))
-          @include('layouts.navbar')
-        @endif
+      <form action="{{ route('wisata.index') }}" method="GET" class="search-box d-flex align-items-center ms-auto me-3">
+        <input type="text" name="search" placeholder="Cari tempat wisata..." value="{{ request('search') }}">
+        <button type="submit"><i class="ti ti-search"></i></button>
+      </form>
 
-        <div class="content-wrapper">
-          <main class="container-xxl flex-grow-1 container-p-y content">
-            @yield('content')
-          </main>
-
-          @if (view()->exists('layouts.footer'))
-            @include('layouts.footer')
-          @else
-            <footer>&copy; {{ date('Y') }} {{ config('app.name', 'Wisataku') }}</footer>
-          @endif
-        </div>
+      <div class="d-flex align-items-center">
+        <i class="ti ti-bell me-3"></i>
+        <img src="https://ui-avatars.com/api/?name=User" class="rounded-circle border" width="35" height="35" alt="avatar">
       </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- Scripts (external) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://demos.pixinvent.com/vuexy-html-admin-template/assets/vendor/js/core.js"></script>
-  <script src="https://demos.pixinvent.com/vuexy-html-admin-template/assets/vendor/js/menu.js"></script>
-  <script src="https://demos.pixinvent.com/vuexy-html-admin-template/assets/vendor/js/main.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <main class="main-content mt-5 pt-3">
+    @yield('content')
+  </main>
 
-  {{-- Stack untuk script child views --}}
-  @stack('scripts')
-
-  {{-- Optional: small helper to generate more particles if wanted (kept minimal) --}}
+  <!-- Efek transisi antar halaman -->
   <script>
-    // Minimal: if you want more particles generated dynamically, uncomment and adjust.
-    // (kept commented to avoid perf surprises)
-    /*
-    (function() {
-      const container = document.querySelector('.particles');
-      for (let i=0;i<12;i++) {
-        const d = document.createElement('div');
-        d.className = 'particle';
-        d.style.left = (Math.random()*100).toFixed(2)+'%';
-        d.style.animationDuration = (10 + Math.random()*8).toFixed(2)+'s';
-        d.style.animationDelay = (Math.random()*5).toFixed(2)+'s';
-        container.appendChild(d);
-      }
-    })();
-    */
+    document.addEventListener("DOMContentLoaded", function() {
+      const overlay = document.getElementById("transition-overlay");
+      const links = document.querySelectorAll("a");
+
+      links.forEach(link => {
+        if (link.href && !link.href.includes('#') && !link.target) {
+          link.addEventListener("click", function(e) {
+            e.preventDefault();
+            overlay.classList.add("active");
+            setTimeout(() => {
+              window.location = this.href;
+            }, 600);
+          });
+        }
+      });
+
+      setTimeout(() => overlay.classList.remove("active"), 300);
+    });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
