@@ -4,10 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Wisata;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class WisataController extends Controller
 {
+    /**
+     * Terapkan middleware auth agar semua fungsi butuh login.
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Tampilkan daftar semua tempat wisata + fitur pencarian
      */
@@ -22,9 +31,8 @@ class WisataController extends Controller
             })
             ->latest()
             ->paginate(9)
-            ->appends(['search' => $search]); // agar pagination mempertahankan keyword
+            ->appends(['search' => $search]);
 
-        // Pesan jika hasil pencarian kosong
         $notFound = ($wisatas->isEmpty() && $search)
             ? "😞 Maaf, tidak ada tempat wisata yang cocok dengan kata kunci: '{$search}'."
             : null;
@@ -57,7 +65,10 @@ class WisataController extends Controller
             $validated['foto'] = $request->file('foto')->store('wisata', 'public');
         }
 
-        Wisata::create($validated);
+        // Buat objek baru dari model Wisata
+        $wisata = new Wisata($validated);
+        $wisata->pengguna_id = Auth::id(); // Catat id pengguna yang menambahkan
+        $wisata->save();
 
         return redirect()->route('wisata.index')->with('success', '✅ Data berhasil ditambahkan!');
     }
@@ -71,18 +82,26 @@ class WisataController extends Controller
     }
 
     /**
-     * Form edit data wisata
+     * Form edit data wisata (hanya admin atau pemilik)
      */
     public function edit(Wisata $wisata)
     {
+        if (Auth::user()->role !== 'admin' && $wisata->pengguna_id !== Auth::id()) {
+            abort(403, '🚫 Anda tidak diizinkan mengedit wisata ini.');
+        }
+
         return view('Wisata.edit', compact('wisata'));
     }
 
     /**
-     * Update data wisata
+     * Update data wisata (hanya admin atau pemilik)
      */
     public function update(Request $request, Wisata $wisata)
     {
+        if (Auth::user()->role !== 'admin' && $wisata->pengguna_id !== Auth::id()) {
+            abort(403, '🚫 Anda tidak diizinkan memperbarui wisata ini.');
+        }
+
         $validated = $request->validate([
             'nama'        => 'required|string|max:255',
             'lokasi'      => 'required|string|max:255',
@@ -104,10 +123,14 @@ class WisataController extends Controller
     }
 
     /**
-     * Hapus data wisata
+     * Hapus data wisata (hanya admin atau pemilik)
      */
     public function destroy(Wisata $wisata)
     {
+        if (Auth::user()->role !== 'admin' && $wisata->pengguna_id !== Auth::id()) {
+            abort(403, '🚫 Anda tidak diizinkan menghapus wisata ini.');
+        }
+
         if ($wisata->foto && Storage::disk('public')->exists($wisata->foto)) {
             Storage::disk('public')->delete($wisata->foto);
         }

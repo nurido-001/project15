@@ -34,7 +34,7 @@
     #transition-overlay {
       position: fixed;
       inset: 0;
-      background: url('/default/opo2.jpg') center/cover no-repeat;
+      background: url('/default/loading 01 .jpg') center/cover no-repeat;
       z-index: 9999;
       opacity: 0;
       pointer-events: none;

@@ -20,7 +20,7 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input terlebih dahulu (lebih aman)
+        // ✅ Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:4',
@@ -28,16 +28,26 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
 
+        // ✅ Coba autentikasi
         if (Auth::attempt($credentials)) {
-            // Regenerasi sesi untuk keamanan (CSRF/session fixation)
+            // Regenerasi sesi untuk keamanan
             $request->session()->regenerate();
 
-            // Redirect ke halaman sebelumnya atau dashboard
-            return redirect()->intended(route('dashboard'))
-                ->with('success', 'Login berhasil!');
+            $pengguna = Auth::user();
+
+            // ✅ Redirect berdasarkan role
+            if ($pengguna->role === 'admin') {
+                return redirect()
+                    ->route('dashboard')
+                    ->with('success', 'Login sebagai Admin berhasil!');
+            } else {
+                return redirect()
+                    ->route('dashboard.cards')
+                    ->with('success', 'Login berhasil sebagai Pengguna!');
+            }
         }
 
-        // Jika gagal login
+        // ❌ Jika gagal login
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
@@ -50,11 +60,12 @@ class LoginController extends Controller
     {
         Auth::logout();
 
-        // Hapus sesi lama dan token untuk keamanan
+        // ✅ Hapus sesi lama dan token untuk keamanan
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')
+        return redirect()
+            ->route('login')
             ->with('status', 'Anda telah keluar dari sistem.');
     }
 }

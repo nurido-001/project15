@@ -24,7 +24,17 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('123456789'),
                 'role' => 'admin',
             ]
+
+
         );
+
+    
+{
+    $this->call([
+        PenggunaSeeder::class,
+    ]);
+}
+
 
         // --- Buat Administrator ---
         $administrator = Administrator::updateOrCreate(

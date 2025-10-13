@@ -2,41 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Pengguna; // ✅ gunakan model yang kamu pakai
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class GrafikController extends Controller
 {
+    /**
+     * Tampilkan grafik pengguna dan admin dalam 30 hari terakhir.
+     */
     public function index()
     {
-        // Ambil rentang waktu 30 hari terakhir
-        $startDate = Carbon::now()->subDays(29);
+        // Rentang waktu: 30 hari terakhir
         $endDate = Carbon::now();
+        $startDate = $endDate->copy()->subDays(29);
 
-        // Siapkan array tanggal 30 hari ke belakang
+        // Siapkan daftar tanggal (30 hari ke belakang)
         $dates = collect();
         for ($i = 0; $i < 30; $i++) {
             $dates->push($startDate->copy()->addDays($i)->format('Y-m-d'));
         }
 
-        // Ambil data pengguna (role: 'user') per hari
-        $penggunaData = $dates->map(function ($date) {
-            return User::whereDate('created_at', $date)
-                ->where('role', 'user')
-                ->count();
+        // Ambil semua data pengguna dalam 30 hari (hanya 1 query besar)
+        $pengguna = Pengguna::whereBetween('created_at', [$startDate->startOfDay(), $endDate->endOfDay()])
+            ->selectRaw('DATE(created_at) as date, role, COUNT(*) as total')
+            ->groupBy('date', 'role')
+            ->get();
+
+        // Siapkan data jumlah per hari berdasarkan role
+        $userData = $dates->map(function ($date) use ($pengguna) {
+            return (int) $pengguna->where('date', $date)->where('role', 'user')->sum('total');
         });
 
-        // Ambil data admin (role: 'admin') per hari
-        $adminData = $dates->map(function ($date) {
-            return User::whereDate('created_at', $date)
-                ->where('role', 'admin')
-                ->count();
+        $adminData = $dates->map(function ($date) use ($pengguna) {
+            return (int) $pengguna->where('date', $date)->where('role', 'admin')->sum('total');
         });
 
-        return view('Admin.grafik', [
+        // Kirim data ke tampilan
+        return view('Grafik.index', [
             'dates' => $dates,
-            'penggunaData' => $penggunaData,
+            'userData' => $userData,
             'adminData' => $adminData,
         ]);
     }

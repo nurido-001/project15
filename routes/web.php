@@ -41,11 +41,9 @@ Route::get('/register', fn() => redirect()->route('login'))->name('register');
 
 
 // ==========================
-// 📊 Area Dashboard (Tanpa middleware dulu)
+// 📊 Area Dashboard
 // ==========================
-
-// ⚠️ Saat produksi nanti, aktifkan middleware('auth')
-Route::controller(HomeController::class)->group(function () {
+Route::middleware(['auth'])->controller(HomeController::class)->group(function () {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/home', 'index')->name('home');
     Route::get('/dashboard/cards', 'cards')->name('dashboard.cards');
@@ -55,36 +53,40 @@ Route::controller(HomeController::class)->group(function () {
 // ==========================
 // 🌄 CRUD Tempat Wisata
 // ==========================
-Route::resource('wisata', WisataController::class)
-    ->parameters(['wisata' => 'wisata'])
-    ->names([
-        'index' => 'wisata.index',
-        'create' => 'wisata.create',
-        'store' => 'wisata.store',
-        'show' => 'wisata.show',
-        'edit' => 'wisata.edit',
-        'update' => 'wisata.update',
-        'destroy' => 'wisata.destroy',
-    ]);
+Route::middleware(['auth'])->group(function () {
+    Route::resource('wisata', WisataController::class)
+        ->parameters(['wisata' => 'wisata'])
+        ->names([
+            'index' => 'wisata.index',
+            'create' => 'wisata.create',
+            'store' => 'wisata.store',
+            'show' => 'wisata.show',
+            'edit' => 'wisata.edit',
+            'update' => 'wisata.update',
+            'destroy' => 'wisata.destroy',
+        ]);
 
-// 🔍 Route tambahan untuk fitur pencarian wisata
-Route::get('/wisata/search', [WisataController::class, 'search'])->name('wisata.search');
+    // 🔍 Fitur pencarian wisata
+    Route::get('/wisata/search', [WisataController::class, 'search'])->name('wisata.search');
+});
 
 
 // ==========================
 // ⭐ Penilaian (Review Wisata)
 // ==========================
-Route::controller(PenilaianController::class)->group(function () {
+Route::middleware(['auth'])->controller(PenilaianController::class)->group(function () {
     Route::post('/penilaian', 'store')->name('penilaian.store');
     Route::delete('/penilaian/{id}', 'destroy')->name('penilaian.destroy');
-    Route::get('/admin/penilaian', 'index')->name('penilaian.index');
 });
 
+// 🔒 Hanya admin yang boleh melihat daftar penilaian penuh
+Route::middleware(['auth', 'isAdmin'])->get('/admin/penilaian', [PenilaianController::class, 'index'])->name('penilaian.index');
+
 
 // ==========================
-// 👑 Admin Area
+// 👑 Admin Area (Hanya untuk Admin)
 // ==========================
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
