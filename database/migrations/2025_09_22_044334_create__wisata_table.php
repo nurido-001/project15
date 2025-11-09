@@ -25,6 +25,12 @@ return new class extends Migration
             // 🖼️ Foto utama wisata (path)
             $table->string('foto')->nullable();
 
+            // 👤 Relasi ke pengguna (foreign key)
+            $table->foreignId('pengguna_id')
+                  ->nullable()
+                  ->constrained('penggunas')
+                  ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

@@ -235,8 +235,8 @@
     <h1><span class="typing"></span></h1>
     <p>
        Temukan keindahan dan pengalaman baru di setiap perjalanan.  
-      Dengan <strong>Wisataku</strong>, kamu bisa menjelajahi berbagai destinasi wisata terbaik di Indonesia,  
-      membaca ulasan pengunjung, serta merencanakan perjalananmu dengan mudah dan cepat 🌿.
+      Dengan <strong>Wisataku</strong>, kamu bisa menjelajahi berbagai destinasi wisata terbaik di berbagai belahan dunia,  
+      membaca ulasan pengunjung, serta merencanakan perjalananmu dengan mudah dan cepat .
     </p>
   </section>
 
@@ -252,20 +252,20 @@
   <section id="fitur">
     <h2>Fitur Utama</h2>
     <ul>
-      <li>🔍 Pencarian & filter tempat wisata berdasarkan lokasi dan kategori</li>
-      <li>🌟 Ulasan & rating dari pengguna</li>
+      <li>🔍 Pencarian & rekomendasi berbagai tempat wisata</li>
+      <li>⭐ Ulasan & rating dari pengguna lain</li>
       <li>📊 Statistik kunjungan dan grafik data wisata</li>
       <li>👤 Pengelolaan data pengguna dan destinasi wisata</li>
-      <li>🛠️ Fitur admin untuk memantau aktivitas aplikasi</li>
+      <li>🛠️ Fitur admin untuk memantau seluruh aktivitas aplikasi</li>
     </ul>
   </section>
 
   <section id="panduan">
     <h2>Panduan Penggunaan</h2>
     <ul>
-      <li>🌍 Pilih menu <strong>Home</strong> untuk menjelajahi wisata yang tersedia</li>
-      <li>📝 Klik salah satu destinasi untuk melihat detail dan ulasan</li>
-      <li>🔐 dan jangan lupa Login untuk mengakses fitur tambahan atau mengelola data wisata</li>
+      <li> Tekan tombol <strong>login</strong> pada bagian kanan atas lalu masukan email dan password </li>
+      <li>Setelah berhasil, anda bisa menekan menu <strong>Dashboard</strong> untuk melihat jumlah Admin, Pengguna hingga total wisata yang ada </li>
+      <li>tak hanya itu, ada juga menu untuk melihat rekomendasi & menjelajahi wisata yang berbeda serta menu grafik untuk melihat jumlah pengunjung selama 30 hari terakhir</li>
     </ul>
   </section>
 

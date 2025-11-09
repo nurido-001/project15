@@ -3,11 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Administrator;
-use App\Models\Pengguna;
-use App\Models\Wisata;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,81 +11,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // --- Buat User Admin (untuk login Laravel default auth) ---
-        User::updateOrCreate(
-            ['email' => 'Admin@wisataku.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('123456789'),
-                'role' => 'admin',
-            ]
+        // 1️⃣ Buat administrator dulu
+        $this->call([
+            AdminUserSeeder::class,
+        ]);
 
+        // 2️⃣ Buat user umum (tabel users)
+        $this->call([
+            UserSeeder::class,
+        ]);
 
-        );
+        // 3️⃣ Buat pengguna (tabel penggunas)
+        $this->call([
+            PenggunaSeeder::class,
+        ]);
 
-    
-{
-    $this->call([
-        PenggunaSeeder::class,
-    ]);
-}
+        // 4️⃣ Buat data wisata (tabel wisatas)
+        $this->call([
+            WisataSeeder::class,
+        ]);
 
-
-        // --- Buat Administrator ---
-        $administrator = Administrator::updateOrCreate(
-            ['email' => 'administrator@wisataku.com'],
-            [
-                'name' => 'Administrator Utama',
-                'password' => Hash::make('admin123'),
-            ]
-        );
-
-        // --- Buat Pengguna ---
-        Pengguna::updateOrCreate(
-            ['email' => 'pengguna1@wisataku.com'],
-            [
-                'name' => 'Pengguna Pertama',
-                'password' => Hash::make('pengguna123'),
-                'administrator_id' => $administrator->id,
-            ]
-        );
-
-        Pengguna::updateOrCreate(
-            ['email' => 'pengguna2@wisataku.com'],
-            [
-                'name' => 'Pengguna Kedua',
-                'password' => Hash::make('pengguna123'),
-                'administrator_id' => $administrator->id,
-            ]
-        );
-
-        // --- Buat beberapa data Wisata (dengan foto) ---
-        $wisata = [
-            [
-                'nama' => 'Hutan Hijau',
-                'lokasi' => 'Kalimantan',
-                'deskripsi' => 'Hutan tropis yang lebat dan asri.',
-                'foto' => 'default/opo1.jpg',
-            ],
-            [
-                'nama' => 'Danau Salju',
-                'lokasi' => 'Papua Pegunungan',
-                'deskripsi' => 'Danau indah yang dikelilingi salju abadi.',
-                'foto' => 'default/opo2.jpg',
-            ],
-            [
-                'nama' => 'Gunung & Danau',
-                'lokasi' => 'Sumatera Utara',
-                'deskripsi' => 'Pemandangan gunung menjulang dan danau biru.',
-                'foto' => 'default/opo3.jpg',
-            ],
-        ];
-
-        foreach ($wisata as $item) {
-            Wisata::updateOrCreate(
-                ['nama' => $item['nama']],
-                $item
-            );
-        }
+        // 5️⃣ Buat data grafik (kalau diperlukan)
+        $this->call([
+            GrafikSeeder::class,
+        ]);
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y fade-in">
 
     {{-- Judul --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,7 +12,8 @@
     <div class="row g-4">
         {{-- Grafik Harga Tiket --}}
         <div class="col-lg-6 col-md-12">
-            <div class="card shadow-lg border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #d6ffcb, #9cecfb);">
+            <div class="card shadow-lg border-0 rounded-4 h-100"
+                style="background: linear-gradient(135deg, #d6ffcb, #9cecfb);">
                 <div class="card-body">
                     <h5 class="card-title text-primary mb-3">
                         <i class="ti ti-chart-bar"></i> Grafik Harga Tiket per Wisata
@@ -24,7 +25,8 @@
 
         {{-- Grafik Pengunjung Harian --}}
         <div class="col-lg-6 col-md-12">
-            <div class="card shadow-lg border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #f6d365, #fda085);">
+            <div class="card shadow-lg border-0 rounded-4 h-100"
+                style="background: linear-gradient(135deg, #f6d365, #fda085);">
                 <div class="card-body">
                     <h5 class="card-title text-primary mb-3">
                         <i class="ti ti-activity"></i> Grafik Pengunjung 30 Hari Terakhir
@@ -44,26 +46,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // === GRAFIK HARGA TIKET ===
     const ctx1 = document.getElementById('chartWisata').getContext('2d');
-    const wisataData = @json($wisatas ?? [
-        { nama: 'Pantai Biru', harga_tiket: 15000 },
-        { nama: 'Air Terjun Indah', harga_tiket: 25000 },
-        { nama: 'Gunung Rindu', harga_tiket: 50000 },
-        { nama: 'Hutan Pinus Asri', harga_tiket: 10000 },
-        { nama: 'Danau Tenang', harga_tiket: 30000 },
-    ]);
+
+    const wisataData = @json($wisatas ?? collect([
+        ['nama' => 'Pantai Biru', 'harga_tiket' => 15000],
+        ['nama' => 'Air Terjun Indah', 'harga_tiket' => 25000],
+        ['nama' => 'Gunung Rindu', 'harga_tiket' => 50000],
+        ['nama' => 'Hutan Pinus Asri', 'harga_tiket' => 10000],
+        ['nama' => 'Danau Tenang', 'harga_tiket' => 30000],
+        ['nama' => 'Lembah Hijau', 'harga_tiket' => 20000],
+        ['nama' => 'Bukit Pelangi', 'harga_tiket' => 35000],
+        ['nama' => 'Goa Cinta Alam', 'harga_tiket' => 18000],
+    ]));
 
     const labels1 = wisataData.map(w => w.nama);
     const harga = wisataData.map(w => w.harga_tiket);
 
     const warnaBar = [
-        '#22c55e', // hijau cerah
-        '#16a34a', // hijau gelap
-        '#3b82f6', // biru sedang
-        '#0ea5e9', // biru cerah
-        '#eab308', // kuning cerah
-        '#facc15', // kuning lembut
-        '#fb923c', // oranye cerah
-        '#f97316'  // oranye sedang
+        '#22c55e', '#16a34a', '#3b82f6', '#0ea5e9',
+        '#eab308', '#facc15', '#fb923c', '#f97316',
     ];
 
     new Chart(ctx1, {
@@ -109,13 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const tgl = new Date();
         tgl.setDate(tgl.getDate() - i);
         tanggal.push(tgl.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }));
-        jumlah.push(Math.floor(Math.random() * 80) + 20);
+        jumlah.push(Math.floor(Math.random() * 150) + 50); // 50–200 pengunjung
     }
 
     const grad = ctx2.createLinearGradient(0, 0, 0, 300);
-    grad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');  // biru muda
-    grad.addColorStop(0.5, 'rgba(132, 204, 22, 0.4)'); // hijau muda
-    grad.addColorStop(1, 'rgba(250, 204, 21, 0.3)');   // kuning lembut
+    grad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
+    grad.addColorStop(0.5, 'rgba(132, 204, 22, 0.4)');
+    grad.addColorStop(1, 'rgba(250, 204, 21, 0.3)');
 
     new Chart(ctx2, {
         type: 'line',
@@ -126,18 +126,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 data: jumlah,
                 fill: true,
                 backgroundColor: grad,
-                borderColor: '#0ea5e9', // biru sedang
+                borderColor: '#0ea5e9',
                 borderWidth: 3,
                 tension: 0.4,
-                pointBackgroundColor: jumlah.map(j => 
-                    j > 70 ? '#facc15' : j > 50 ? '#22c55e' : '#3b82f6'
+                pointBackgroundColor: jumlah.map(j =>
+                    j > 130 ? '#facc15' : j > 100 ? '#22c55e' : '#3b82f6'
                 ),
                 pointRadius: 5,
                 pointHoverRadius: 8
             }]
         },
         options: {
-            plugins: { legend: { display: false } },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Jumlah Pengunjung per Hari',
+                    color: '#1e293b',
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,

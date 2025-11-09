@@ -43,4 +43,13 @@ class Pengguna extends Model
     {
         return $this->hasMany(Penilaian::class);
     }
+
+
+
+
+    public function wisatas()
+{
+    return $this->hasMany(Wisata::class);
+}
+
 }

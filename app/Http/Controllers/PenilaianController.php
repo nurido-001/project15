@@ -25,7 +25,7 @@ class PenilaianController extends Controller
             ? Penilaian::with(['pengguna', 'wisata'])->latest()->paginate(10)
             : Penilaian::where('pengguna_id', $user->id)->with('wisata')->latest()->paginate(10);
 
-        return view('penilaian.index', compact('penilaians'));
+        return view('Penilaian.index', compact('penilaians'));
     }
 
     /**

@@ -9,16 +9,17 @@
 
     <ul class="menu-inner list-unstyled mt-3 px-2">
 
-        {{-- 🏠 Dashboard Statistik --}}
+      
         <li class="menu-item {{ request()->routeIs('dashboard.index') ? 'active' : '' }}">
             <a href="{{ route('dashboard') }}" 
                class="menu-link d-flex align-items-center text-white text-decoration-none py-2 px-3 rounded">
                 <i class="menu-icon ti ti-smart-home me-2"></i>
                 <div>Dashboard</div>
+                
             </a>
         </li>
 
-        {{-- 🗺️ Rekomendasi Tempat Wisata --}}
+   
         <li class="menu-item {{ request()->routeIs('cards.index') ? 'active' : '' }}">
             <a href="{{ route('dashboard.cards') }}" 
                class="menu-link d-flex align-items-center text-white text-decoration-none py-2 px-3 rounded">
@@ -27,7 +28,7 @@
             </a>
         </li>
 
-        {{-- 👥 Kelola Pengguna (Hanya untuk admin) --}}
+        {{-- (Hanya untuk admin) --}}
         @auth
             @if (Auth::user()->role === 'admin')
                 <li class="menu-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}">
@@ -40,7 +41,7 @@
             @endif
         @endauth
 
-        {{-- 🧭 Jelajahi Tempat Wisata --}}
+      
         <li class="menu-item {{ request()->routeIs('wisata.*') ? 'active' : '' }}">
             <a href="{{ route('wisata.index') }}" 
                class="menu-link d-flex align-items-center text-white text-decoration-none py-2 px-3 rounded">
@@ -49,12 +50,12 @@
             </a>
         </li>
 
-        {{-- 📊 Lihat Grafik Pengguna --}}
+        {{-- Lihat Grafik Pengguna --}}
         <li class="menu-item {{ request()->routeIs('grafik.index') ? 'active' : '' }}">
             <a href="{{ route('grafik.index') }}" 
                class="menu-link d-flex align-items-center text-white text-decoration-none py-2 px-3 rounded">
                 <i class="menu-icon ti ti-chart-bar me-2"></i>
-                <div>Lihat Grafik Pengguna</div>
+                <div>                        Grafik Pengunjung                                 </div>
             </a>
         </li>
 
@@ -65,8 +66,8 @@
 .sidebar {
     width: 250px;
     min-height: 100vh;
-    background: linear-gradient(180deg, #16a34a, #15803d);
-    color: #fff;
+    background: linear-gradient(180deg, #fff200, #00be03db, #00dab9, #00a9e1, #2406e4, #1f06ae);
+    color: #ffffff;
 }
 .menu-item {
     margin-bottom: 6px;
@@ -74,7 +75,7 @@
 .menu-link:hover,
 .menu-item.active .menu-link {
     background-color: rgba(255, 255, 255, 0.15);
-    color: #fff;
+    color: #ffffff;
     transform: translateX(4px);
     transition: all 0.3s ease;
 }

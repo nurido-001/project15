@@ -8,28 +8,21 @@ use Illuminate\Support\Facades\Hash;
 
 class PenggunaController extends Controller
 {
-    /**
-     * Tampilkan daftar seluruh pengguna.
-     */
+    
     public function index()
     {
-        // Ambil semua data pengguna
+       
         $penggunas = Pengguna::latest()->get();
 
-        return view('Pengguna.index', compact('penggunas')); // ✅ folder 'pengguna' huruf kecil (konvensi Laravel)
+        return view('Pengguna.index', compact('penggunas')); 
     }
 
-    /**
-     * Form tambah pengguna baru.
-     */
+   
     public function create()
     {
         return view('Pengguna.create');
     }
 
-    /**
-     * Simpan pengguna baru ke database.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -48,17 +41,12 @@ class PenggunaController extends Controller
             ->with('success', '✅ Pengguna berhasil ditambahkan.');
     }
 
-    /**
-     * Form edit pengguna.
-     */
+  
     public function edit(Pengguna $pengguna)
     {
         return view('Pengguna.edit', compact('pengguna'));
     }
 
-    /**
-     * Update data pengguna.
-     */
     public function update(Request $request, Pengguna $pengguna)
     {
         $request->validate([
@@ -78,9 +66,6 @@ class PenggunaController extends Controller
             ->with('success', '✏️ Data pengguna berhasil diperbarui.');
     }
 
-    /**
-     * Hapus data pengguna.
-     */
     public function destroy(Pengguna $pengguna)
     {
         $pengguna->delete();

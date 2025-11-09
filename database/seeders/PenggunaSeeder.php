@@ -13,20 +13,20 @@ class PenggunaSeeder extends Seeder
      */
     public function run(): void
     {
-        // Akun untuk pengguna biasa
+        
         Pengguna::create([
             'name' => 'Pengguna WisataKu',
-            'email' => 'Pengguna@wisataku.com',
-            'password' => Hash::make('password123'),
-            'role' => 'pengguna', // pastikan kolom 'role' ada di tabel
+            'email' => 'Pengguna1@wisataku.com',
+            'password' => Hash::make('Password123'),
+            
         ]);
 
-        // Akun untuk admin
+        
         Pengguna::create([
             'name' => 'Administrator WisataKu',
             'email' => 'admin@wisataku.com',
             'password' => Hash::make('admin123'),
-            'role' => 'admin',
+        
         ]);
     }
 }

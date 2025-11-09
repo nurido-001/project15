@@ -5,34 +5,15 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-use App\Models\Administrator;
 use App\Models\Pengguna;
 
 class GrafikSeeder extends Seeder
 {
     /**
-     * Jalankan seeder untuk data grafik (Admin & Pengguna).
+     * Jalankan seeder untuk data grafik (hanya Pengguna).
      */
     public function run(): void
     {
-        // 🔹 Tambahkan admin utama
-        Administrator::create([
-            'name' => 'Admin Utama',
-            'email' => 'admin@wisataku.com',
-            'password' => Hash::make('password'),
-            'created_at' => Carbon::now()->subDays(rand(0, 10)),
-        ]);
-
-        // 🔹 Tambahkan beberapa admin tambahan acak
-        for ($i = 1; $i <= 3; $i++) {
-            Administrator::create([
-                'name' => 'Admin ' . $i,
-                'email' => 'admin' . $i . '@wisataku.com',
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now()->subDays(rand(0, 30)),
-            ]);
-        }
-
         // 🔹 Tambahkan beberapa pengguna dengan tanggal acak
         for ($i = 1; $i <= 20; $i++) {
             Pengguna::create([
@@ -43,7 +24,7 @@ class GrafikSeeder extends Seeder
             ]);
         }
 
-        // Tambahkan sedikit variasi waktu pembuatan
+        // 🔹 Tambahkan pengguna baru dengan variasi waktu (jam terakhir)
         for ($i = 1; $i <= 5; $i++) {
             Pengguna::create([
                 'name' => 'Pengunjung Baru ' . $i,
@@ -53,6 +34,6 @@ class GrafikSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('✅ Data dummy untuk grafik (Admin & Pengguna) berhasil dibuat!');
+        $this->command->info('✅ Data dummy untuk grafik (Pengguna) berhasil dibuat tanpa duplikasi admin!');
     }
 }

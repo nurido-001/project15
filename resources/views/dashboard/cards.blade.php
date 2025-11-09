@@ -31,6 +31,16 @@
                     'gambar' => 'img/aa.jpg'
                 ],
                 [
+                    'nama' => 'Pagoda Chureito',
+                    'lokasi' => 'Fujiyoshida, Prefektur Yamanashi, Jepang',
+                    'gambar' => 'img/japan .jpg'
+                ],
+                [
+                    'nama' => 'Candi Prambanan',
+                    'lokasi' => 'Yogyakarta, Indonesia',
+                    'gambar' => 'img/prambanan .jpg'
+                ],
+                [
                     'nama' => 'Menara Eiffel',
                     'lokasi' => 'Paris, Prancis',
                     'gambar' => 'img/jj.jpg'
@@ -46,6 +56,10 @@
                     'gambar' => 'img/yy.jpg'
                 ],
             ];
+
+            // Acak dan ambil 4 item saja
+            shuffle($rekomendasi);
+            $rekomendasi = array_slice($rekomendasi, 0, 4);
 
             $quotes = [
                 ' "Setiap perjalanan adalah kisah baru yang menunggu untuk kamu tulis."',
@@ -68,7 +82,7 @@
                     <h5 class="fw-bold text-success">{{ $r['nama'] }}</h5>
                     <p class="text-muted small mb-2">{{ $r['lokasi'] }}</p>
                     <a href="#" class="btn btn-sm text-white px-3"
-                       style="background: linear-gradient(135deg, #22c55e, #16a34a); border: none;">
+                       style="background: linear-gradient(135deg, #b5d806, #09dc17); border: none;">
                        Jelajahi
                     </a>
                 </div>
@@ -79,11 +93,11 @@
 
     {{-- KUTIPAN MOTIVASI --}}
     <div class="text-center mt-5 fade-in">
-        <p class="fw-semibold fst-italic text-primary">{{ $quote }}</p>
+        <p class="fw-semibold fst-italic gradient-text text-stroke">{{ $quote }}</p>
     </div>
 </div>
 
-{{-- ANIMASI FADE-IN --}}
+{{-- ANIMASI & GRADIENT STYLE --}}
 <style>
 .fade-in {
   opacity: 0;
@@ -108,6 +122,20 @@
 .wisata-card:hover {
   transform: translateY(-6px) scale(1.03);
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.gradient-text {
+  background: linear-gradient(90deg, #4ade80, #facc15, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 🖤 Tambahkan garis hitam di sekitar teks agar mudah dibaca */
+.text-stroke {
+  text-shadow:
+    -1px -1px 2px #00ff08,
+     1px -1px 2px #4b06e1,
+    -1px  1px 2px #000000,
+     1px  1px 2px #ffffff;
 }
 </style>
 @endsection

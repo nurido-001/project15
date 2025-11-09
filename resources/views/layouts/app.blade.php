@@ -55,7 +55,7 @@
       left: 0;
       height: 100vh;
       width: 250px;
-      background: linear-gradient(180deg, #00a86b, #2ecc71, #f1c40f);
+      background: linear-gradient(180deg, #001ca8, #2ecc71, #f1c40f);
       padding-top: 1rem;
       box-shadow: 4px 0 25px rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(8px);
@@ -87,15 +87,15 @@
 
     .sidebar .menu-link:hover,
     .sidebar .menu-item.active .menu-link {
-      background: linear-gradient(90deg, #f1c40f, #27ae60, #16a085);
+      background: linear-gradient(90deg, #ae00ff, #000dff, #00ffcc);
       transform: translateX(6px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
     /* Navbar */
     .navbar-custom {
-      background: linear-gradient(90deg, #00bcd4, #2ecc71, #f1c40f);
-      color: #004d40;
+      background: linear-gradient(90deg, #ddff00e0, #05d024, #ddff00);
+      color: #000000;
       border: none;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(6px);
@@ -138,14 +138,14 @@
 
     .search-box button {
       border: none;
-      background: linear-gradient(135deg, #00bcd4, #f1c40f);
+      background: linear-gradient(135deg, #0dff00, #c3ff00, #0dff00 );
       border-radius: 50%;
       width: 36px;
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: rgb(0, 0, 0);
       transition: all 0.3s ease;
     }
 
@@ -184,7 +184,7 @@
     }
 
     .btn-edit {
-      background: linear-gradient(135deg, #00bcd4, #009688);
+      background: linear-gradient(135deg, #0035d4, #0660dd);
       color: #fff;
       border: none;
     }

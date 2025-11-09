@@ -16,17 +16,9 @@ return new class extends Migration
 
             // 🔗 Relasi ke tabel pengguna
             $table->unsignedBigInteger('pengguna_id');
-            $table->foreign('pengguna_id')
-                  ->references('id')
-                  ->on('penggunas') // pastikan nama tabel pengguna kamu benar
-                  ->onDelete('cascade');
 
             // 🔗 Relasi ke tabel wisata (bukan tempat_wisata lagi)
             $table->unsignedBigInteger('wisata_id');
-            $table->foreign('wisata_id')
-                  ->references('id')
-                  ->on('wisatas') // sesuaikan dengan nama tabel dari model Wisata
-                  ->onDelete('cascade');
 
             // ⭐ Kolom rating (1–5)
             $table->unsignedTinyInteger('rating')
