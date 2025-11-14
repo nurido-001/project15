@@ -2,48 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengguna; // ✅ gunakan model yang kamu pakai
+use App\Models\Wisata;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class GrafikController extends Controller
 {
     /**
-     * Tampilkan grafik pengguna dan admin dalam 30 hari terakhir.
+     * Tampilkan grafik statistik wisata & pengunjung.
+     * Route: GET /admin/grafik
+     * Middleware: auth, isAdmin
      */
     public function index()
     {
-        // Rentang waktu: 30 hari terakhir
-        $endDate = Carbon::now();
-        $startDate = $endDate->copy()->subDays(29);
+        // === 1️⃣ Ambil semua wisata untuk grafik harga tiket ===
+        // Pastikan tabel wisatas memiliki kolom 'nama' dan 'harga_tiket'
+        $wisatas = Wisata::select('nama', 'harga_tiket')->get();
 
-        // Siapkan daftar tanggal (30 hari ke belakang)
-        $dates = collect();
-        for ($i = 0; $i < 30; $i++) {
-            $dates->push($startDate->copy()->addDays($i)->format('Y-m-d'));
+        // === 2️⃣ Buat daftar tanggal 30 hari terakhir ===
+        $tanggal = collect();
+        for ($i = 29; $i >= 0; $i--) {
+            $tanggal->push(Carbon::now()->subDays($i)->format('d M'));
         }
 
-        // Ambil semua data pengguna dalam 30 hari (hanya 1 query besar)
-        $pengguna = Pengguna::whereBetween('created_at', [$startDate->startOfDay(), $endDate->endOfDay()])
-            ->selectRaw('DATE(created_at) as date, role, COUNT(*) as total')
-            ->groupBy('date', 'role')
-            ->get();
+        // === 3️⃣ (Sementara) Simulasi jumlah pengunjung harian ===
+        // Nantinya bisa diganti dengan data asli dari tabel 'penilaians' atau 'kunjungan'
+        $pengunjung = $tanggal->map(fn () => rand(50, 200));
 
-        // Siapkan data jumlah per hari berdasarkan role
-        $userData = $dates->map(function ($date) use ($pengguna) {
-            return (int) $pengguna->where('date', $date)->where('role', 'user')->sum('total');
-        });
-
-        $adminData = $dates->map(function ($date) use ($pengguna) {
-            return (int) $pengguna->where('date', $date)->where('role', 'admin')->sum('total');
-        });
-
-        // Kirim data ke tampilan
+        // === 4️⃣ Kirim semua data ke view ===
         return view('Grafik.index', [
-            'dates' => $dates,
-            'userData' => $userData,
-            'adminData' => $adminData,
+            'wisatas' => $wisatas,
+            'tanggal' => $tanggal,
+            'pengunjung' => $pengunjung,
         ]);
     }
 }

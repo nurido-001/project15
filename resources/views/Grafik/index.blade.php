@@ -47,16 +47,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // === GRAFIK HARGA TIKET ===
     const ctx1 = document.getElementById('chartWisata').getContext('2d');
 
-    const wisataData = @json($wisatas ?? collect([
-        ['nama' => 'Pantai Biru', 'harga_tiket' => 15000],
-        ['nama' => 'Air Terjun Indah', 'harga_tiket' => 25000],
-        ['nama' => 'Gunung Rindu', 'harga_tiket' => 50000],
-        ['nama' => 'Hutan Pinus Asri', 'harga_tiket' => 10000],
-        ['nama' => 'Danau Tenang', 'harga_tiket' => 30000],
-        ['nama' => 'Lembah Hijau', 'harga_tiket' => 20000],
-        ['nama' => 'Bukit Pelangi', 'harga_tiket' => 35000],
-        ['nama' => 'Goa Cinta Alam', 'harga_tiket' => 18000],
-    ]));
+    // Ambil data dari controller, fallback jika kosong
+    @php
+        $dataWisata = $wisatas->isNotEmpty() ? $wisatas : collect([
+            ['nama' => 'Pantai Biru', 'harga_tiket' => 15000],
+            ['nama' => 'Air Terjun Indah', 'harga_tiket' => 25000],
+            ['nama' => 'Gunung Rindu', 'harga_tiket' => 50000],
+            ['nama' => 'Hutan Pelangi', 'harga_tiket' => 18000],
+        ]);
+    @endphp
+
+    const wisataData = @json($dataWisata);
 
     const labels1 = wisataData.map(w => w.nama);
     const harga = wisataData.map(w => w.harga_tiket);
@@ -83,7 +84,16 @@ document.addEventListener("DOMContentLoaded", function () {
             responsive: true,
             plugins: {
                 legend: { display: false },
-                title: { display: true, text: 'Harga Tiket Wisata', color: '#1e293b', font: { size: 14, weight: 'bold' } }
+                title: {
+                    display: true,
+                    text: 'Harga Tiket Wisata',
+                    color: '#1e293b',
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
+            animation: {
+                duration: 1200,
+                easing: 'easeOutBounce'
             },
             scales: {
                 y: {
@@ -99,18 +109,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
     // === GRAFIK PENGUNJUNG ===
     const ctx2 = document.getElementById('chartPengunjung').getContext('2d');
-    const tanggal = [];
-    const jumlah = [];
-
-    for (let i = 29; i >= 0; i--) {
-        const tgl = new Date();
-        tgl.setDate(tgl.getDate() - i);
-        tanggal.push(tgl.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }));
-        jumlah.push(Math.floor(Math.random() * 150) + 50); // 50–200 pengunjung
-    }
+    const tanggal = @json($tanggal);
+    const jumlah = @json($pengunjung);
 
     const grad = ctx2.createLinearGradient(0, 0, 0, 300);
     grad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
@@ -145,6 +147,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     color: '#1e293b',
                     font: { size: 14, weight: 'bold' }
                 }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
             },
             scales: {
                 y: {

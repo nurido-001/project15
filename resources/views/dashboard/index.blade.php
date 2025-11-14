@@ -1,177 +1,93 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
-  {{-- Judul --}}
-  <div class="text-center mb-5">
-    <h2 class="fw-bold text-primary fade-in">Selamat Datang di Dashboard WisataKu</h2>
-    <p class="text-muted">Pantau data wisata, pengguna, dan penilaian terbaru di satu tempat.</p>
-  </div>
+<div class="container-xxl flex-grow-1 container-p-y fade-in">
+  <div class="dashboard-bg">
+    <h4 class="fw-bold py-3 mb-4 text-gradient">Dashboard</h4>
 
-  {{-- Statistik Singkat --}}
-  <div class="row g-4 mb-4">
-    @php
-      $stats = [
-        ['label' => 'Total Admin', 'value' => $totalAdmin ?? 0, 'icon' => 'ti ti-user-shield', 'color' => 'primary'],
-        ['label' => 'Total Pengguna', 'value' => $totalPengguna ?? 0, 'icon' => 'ti ti-users', 'color' => 'success'],
-        ['label' => 'Total Wisata', 'value' => $totalWisata ?? 0, 'icon' => 'ti ti-map-2', 'color' => 'info'],
-        ['label' => 'Total Penilaian', 'value' => $totalPenilaian ?? 0, 'icon' => 'ti ti-star', 'color' => 'warning'],
-      ];
-    @endphp
-
-    @foreach($stats as $s)
-      <div class="col-md-3 col-sm-6">
-        <div class="card shadow-sm border-0 hover-card fade-up">
-          <div class="card-body text-center">
-            <div class="rounded-circle bg-{{ $s['color'] }} bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-2" style="width:50px;height:50px;">
-              <i class="{{ $s['icon'] }} text-{{ $s['color'] }} fs-4"></i>
-            </div>
-            <h6 class="card-title text-muted">{{ $s['label'] }}</h6>
-            <h3 class="fw-bold text-{{ $s['color'] }}">{{ $s['value'] }}</h3>
+    {{-- Statistik Card --}}
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="card stat-card hover-card glass-card text-center p-3">
+          <div class="card-body">
+            <h6 class="text-muted">Total Admin</h6>
+            <h3 class="fw-bold text-primary">{{ $totalAdmin }}</h3>
           </div>
         </div>
       </div>
-    @endforeach
-  </div>
 
-  {{-- Grafik Pengguna --}}
-  <div class="card mb-4 shadow-sm border-0 fade-up">
-    <div class="card-header bg-light fw-bold d-flex align-items-center">
-      <i class="ti ti-chart-line text-primary me-2"></i> Grafik Pengguna per Bulan
-    </div>
-    <div class="card-body">
-      <div id="grafik-pengguna" style="min-height:300px;"></div>
-    </div>
-  </div>
-
-  {{-- Data Terbaru --}}
-  <div class="row fade-up">
-    {{-- Pengguna Terbaru --}}
-    <div class="col-md-6">
-      <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-light fw-bold text-primary">
-          <i class="ti ti-users me-2"></i>Pengguna Terbaru
+      <div class="col-md-3">
+        <div class="card stat-card hover-card glass-card text-center p-3">
+          <div class="card-body">
+            <h6 class="text-muted">Total Pengguna</h6>
+            <h3 class="fw-bold text-success">{{ $totalPengguna }}</h3>
+          </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-hover table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Nama</th>
-                <th>Email</th>
-                <th>Tanggal</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse($latestPengguna as $p)
-                <tr>
-                  <td>{{ $p->nama ?? '-' }}</td>
-                  <td>{{ $p->email ?? '-' }}</td>
-                  <td>{{ $p->created_at ? $p->created_at->format('d M Y') : '-' }}</td>
-                </tr>
-              @empty
-                <tr><td colspan="3" class="text-center text-muted">Belum ada data</td></tr>
-              @endforelse
-            </tbody>
-          </table>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card stat-card hover-card glass-card text-center p-3">
+          <div class="card-body">
+            <h6 class="text-muted">Total Wisata</h6>
+            <h3 class="fw-bold text-warning">{{ $totalWisata }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card stat-card hover-card glass-card text-center p-3">
+          <div class="card-body">
+            <h6 class="text-muted">Total Penilaian</h6>
+            <h3 class="fw-bold text-danger">{{ $totalPenilaian }}</h3>
+          </div>
         </div>
       </div>
     </div>
 
-    {{-- Wisata Terbaru --}}
-    <div class="col-md-6">
-      <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-light fw-bold text-primary">
-          <i class="ti ti-map-pin me-2"></i>Wisata Terbaru
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Nama</th>
-                <th>Lokasi</th>
-                <th>Tanggal</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse($latestWisata as $w)
-                <tr>
-                  <td>{{ $w->nama ?? '-' }}</td>
-                  <td>{{ $w->lokasi ?? '-' }}</td>
-                  <td>{{ $w->created_at ? $w->created_at->format('d M Y') : '-' }}</td>
-                </tr>
-              @empty
-                <tr><td colspan="3" class="text-center text-muted">Belum ada data</td></tr>
-              @endforelse
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {{-- Review & Admin Terbaru --}}
-  <div class="row fade-up">
-    <div class="col-md-6">
-      <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-light fw-bold text-primary">
-          <i class="ti ti-user-shield me-2"></i>Admin Terbaru
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Nama</th>
-                <th>Email</th>
-                <th>Tanggal</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse($latestAdmins as $a)
-                <tr>
-                  <td>{{ $a->nama ?? '-' }}</td>
-                  <td>{{ $a->email ?? '-' }}</td>
-                  <td>{{ $a->created_at ? $a->created_at->format('d M Y') : '-' }}</td>
-                </tr>
-              @empty
-                <tr><td colspan="3" class="text-center text-muted">Belum ada data</td></tr>
-              @endforelse
-            </tbody>
-          </table>
+    {{-- Grafik --}}
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="card glass-card p-3 fade-up">
+          <div class="card-body">
+            <div id="grafikPenilaian" style="height: 350px;"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    {{-- Penilaian Terbaru --}}
-    <div class="col-md-6">
-      <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-light fw-bold text-primary">
-          <i class="ti ti-star me-2"></i>Penilaian Terbaru
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Pengguna</th>
-                <th>Wisata</th>
-                <th>Rating</th>
-                <th>Tanggal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{-- @forelse($latestReview as $r)
-                <tr>
-                  <td>{{ $r->pengguna->nama ?? '-' }}</td>
-                  <td>{{ $r->wisata->nama ?? '-' }}</td>
-                  <td>
-                    <span class="text-warning">{{ str_repeat('⭐', $r->rating) }}</span>
-                  </td>
-                  <td>{{ $r->created_at ? $r->created_at->format('d M Y') : '-' }}</td>
-                </tr>
-              @empty
-                <tr><td colspan="4" class="text-center text-muted">Belum ada data</td></tr>
-              @endforelse --}}
-            </tbody>
-          </table>
+    {{-- Data Terbaru --}}
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="card glass-card p-3 fade-up">
+          <div class="card-header fw-bold">Penilaian Terbaru</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle">
+                <thead class="bg-gradient text-dark">
+                  <tr>
+                    <th>Pengguna</th>
+                    <th>Wisata</th>
+                    <th>Rating</th>
+                    <th>Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse($latestPenilaian as $r)
+                    <tr>
+                      <td>{{ $r->pengguna->nama ?? '-' }}</td>
+                      <td>{{ $r->wisata->nama ?? '-' }}</td>
+                      <td>{{ $r->rating }}</td>
+                      <td>{{ $r->created_at->format('d M Y') }}</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="4" class="text-center text-muted">Belum ada data penilaian</td>
+                    </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -179,31 +95,88 @@
 </div>
 @endsection
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script>
-  // Grafik Pengguna
-  var options = {
-    chart: { type: 'line', height: 300, animations: { easing: 'easeinout', speed: 800 }},
-    series: [{
-      name: 'Jumlah Pengguna',
-      data: @json($data ?? []),
-    }],
-    colors: ['#008FFB'],
-    xaxis: { categories: @json($labels ?? []), title: { text: 'Bulan' } },
-    yaxis: { title: { text: 'Jumlah' } },
-    stroke: { curve: 'smooth', width: 3 },
-    markers: { size: 4 },
-    grid: { borderColor: '#eee' }
-  };
-  new ApexCharts(document.querySelector("#grafik-pengguna"), options).render();
-</script>
-
+{{-- Tema dan animasi --}}
+@push('styles')
 <style>
+  body {
+    background: linear-gradient(135deg, #f0faff, #e0f7fa);
+  }
+
+  .dashboard-bg {
+    background: linear-gradient(135deg, #f8fdff, #ecf9f6);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, #00b894, #0984e3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .fade-in { animation: fadeIn 1.2s ease-in-out; }
-  .fade-up { animation: fadeUp 0.9s ease-in-out; }
-  .hover-card:hover { transform: translateY(-4px); transition: .3s; box-shadow: 0 6px 18px rgba(0,0,0,.1); }
+  .fade-up { animation: fadeUp 1s ease-in-out forwards; opacity: 0; }
+
+  /* Efek muncul bertahap untuk setiap card */
+  .stat-card {
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeUpCard 0.6s ease-out forwards;
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.3s; }
+  .stat-card:nth-child(3) { animation-delay: 0.5s; }
+  .stat-card:nth-child(4) { animation-delay: 0.7s; }
+
+  @keyframes fadeUpCard {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hover-card:hover { transform: translateY(-6px); transition: .4s; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+  .glass-card {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    transition: all .3s ease;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+
   @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
   @keyframes fadeUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const cards = document.querySelectorAll(".stat-card");
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.style.opacity = 1;
+        card.style.transform = "translateY(0)";
+      }, 200 * index);
+    });
+  });
+
+  // ApexCharts grafik tetap aman
+  var options = {
+    chart: { type: 'area', height: 350, toolbar: { show: false } },
+    series: [{
+      name: 'Jumlah Penilaian',
+      data: @json($grafikData['jumlah'])
+    }],
+    xaxis: { categories: @json($grafikData['bulan']) },
+    colors: ['#00b894'],
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 90, 100] } }
+  };
+  var chart = new ApexCharts(document.querySelector("#grafikPenilaian"), options);
+  chart.render();
+</script>
 @endpush

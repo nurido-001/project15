@@ -17,9 +17,7 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    // ==========================
     // Halaman utama (home)
-    // ==========================
     public function index()
     {
         // Jika view dashboard.index ada, arahkan ke sana
@@ -33,9 +31,7 @@ class HomeController extends Controller
         ]);
     }
 
-    // ==========================
     // Dashboard utama
-    // ==========================
     public function dashboard()
     {
         // Hitung total data
@@ -49,13 +45,16 @@ class HomeController extends Controller
         $latestPengguna = Pengguna::latest()->take(5)->get();
         $latestWisata   = Wisata::latest()->take(5)->get();
 
-        // Review terbaru (dengan relasi pengguna & wisata)
+        // Review terbaru (fitur penting)
         $latestReview = Penilaian::with(['pengguna', 'wisata'])
             ->latest()
             ->take(5)
             ->get();
 
-        // Grafik pengguna per bulan
+        // Versi tambahan untuk dashboard (agar tidak error di Blade)
+        $latestPenilaian = $latestReview;
+
+        // Grafik pengguna per bulan (labels & data)
         $grafikPengguna = Pengguna::selectRaw('COUNT(*) as total, MONTH(created_at) as bulan')
             ->groupBy('bulan')
             ->orderBy('bulan')
@@ -73,35 +72,32 @@ class HomeController extends Controller
         $data = [];
         foreach ($grafikPengguna as $bulanIndex => $total) {
             $labels[] = $bulanNama[$bulanIndex] ?? $bulanIndex;
-            $data[] = $total;
+            $data[] = (int) $total;
         }
+
+        // --- Sediakan grafikData agar view tidak error (digunakan oleh beberapa versi blade)
+        $grafikData = [
+            'bulan'  => $labels,
+            'jumlah' => $data,
+        ];
 
         return view('dashboard.index', compact(
-                'totalAdmin',
-                'totalPengguna',
-                'totalWisata',
-                'totalPenilaian',
-                'latestAdmins',
-                'latestPengguna',
-                'latestWisata',
-                // 'latestReview',
-                'labels',
-                'data'
-            ));
-
-        // Pastikan view-nya ada, jika belum tampilkan fallback
-        if (View::exists('dashboard.index')) {
-            
-        } else {
-            return view('home', [
-                'message' => 'Dashboard belum tersedia, namun data sudah siap.'
-            ]);
-        }
+            'totalAdmin',
+            'totalPengguna',
+            'totalWisata',
+            'totalPenilaian',
+            'latestAdmins',
+            'latestPengguna',
+            'latestWisata',
+            'latestReview',     // tetap dipertahankan
+            'latestPenilaian',  // ditambahkan agar Blade tidak error
+            'labels',
+            'data',
+            'grafikData'        // <-- penting: kirim ke view
+        ));
     }
 
-    // ==========================
     // Halaman tambahan (contoh kartu)
-    // ==========================
     public function cards()
     {
         if (View::exists('dashboard.cards')) {
