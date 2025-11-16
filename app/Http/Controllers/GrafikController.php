@@ -15,24 +15,39 @@ class GrafikController extends Controller
      */
     public function index()
     {
-        // === 1️⃣ Ambil semua wisata untuk grafik harga tiket ===
-        // Pastikan tabel wisatas memiliki kolom 'nama' dan 'harga_tiket'
-        $wisatas = Wisata::select('nama', 'harga_tiket')->get();
+        // === Ambil data wisata dari database ===
+        $wisatasDB = Wisata::select('nama', 'harga_tiket')->get();
 
-        // === 2️⃣ Buat daftar tanggal 30 hari terakhir ===
-        $tanggal = collect();
+        $wisatas = $wisatasDB->isNotEmpty()
+            ? $wisatasDB
+            : collect([
+                ['nama' => 'Tembok Besar Cina', 'harga_tiket' => 700000],
+                ['nama' => 'Gunung Bromo', 'harga_tiket' => 600000],
+                ['nama' => 'Pura Ulun Danu Beratan', 'harga_tiket' => 450000],
+                ['nama' => 'Sydney Opera House', 'harga_tiket' => 650000],
+                ['nama' => 'Patung Liberty', 'harga_tiket' => 500000],
+                ['nama' => 'Pantai Indah', 'harga_tiket' => 25000],
+            ]);
+
+        // === Daftar tanggal 30 hari terakhir ===
+        $tanggal = [];
         for ($i = 29; $i >= 0; $i--) {
-            $tanggal->push(Carbon::now()->subDays($i)->format('d M'));
+            $tanggal[] = Carbon::now()->subDays($i)->format('d M');
         }
 
-        // === 3️⃣ (Sementara) Simulasi jumlah pengunjung harian ===
-        // Nantinya bisa diganti dengan data asli dari tabel 'penilaians' atau 'kunjungan'
-        $pengunjung = $tanggal->map(fn () => rand(50, 200));
+        // === Simulasi jumlah pengunjung harian ===
+        $pengunjung = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $day = Carbon::now()->subDays($i);
+            $pengunjung[] = $day->isWeekend()
+                ? rand(120, 180)   // Weekend ramai
+                : rand(60, 130);   // Weekday sedang
+        }
 
-        // === 4️⃣ Kirim semua data ke view ===
+        // === Kirim data ke view sebagai array ===
         return view('Grafik.index', [
-            'wisatas' => $wisatas,
-            'tanggal' => $tanggal,
+            'wisatas'    => $wisatas->toArray(),
+            'tanggal'    => $tanggal,
             'pengunjung' => $pengunjung,
         ]);
     }

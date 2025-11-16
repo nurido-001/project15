@@ -13,7 +13,7 @@
         {{-- Grafik Harga Tiket --}}
         <div class="col-lg-6 col-md-12">
             <div class="card shadow-lg border-0 rounded-4 h-100"
-                style="background: linear-gradient(135deg, #d6ffcb, #9cecfb);">
+                style="background: linear-gradient(135deg, #0109e4,#00eaff,#66ff00,#fffb00);">
                 <div class="card-body">
                     <h5 class="card-title text-primary mb-3">
                         <i class="ti ti-chart-bar"></i> Grafik Harga Tiket per Wisata
@@ -26,7 +26,7 @@
         {{-- Grafik Pengunjung Harian --}}
         <div class="col-lg-6 col-md-12">
             <div class="card shadow-lg border-0 rounded-4 h-100"
-                style="background: linear-gradient(135deg, #f6d365, #fda085);">
+                style="background: linear-gradient(135deg, #ffee00, #0ee802, #00d9ff, #0a04bc);">
                 <div class="card-body">
                     <h5 class="card-title text-primary mb-3">
                         <i class="ti ti-activity"></i> Grafik Pengunjung 30 Hari Terakhir
@@ -47,17 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // === GRAFIK HARGA TIKET ===
     const ctx1 = document.getElementById('chartWisata').getContext('2d');
 
-    // Ambil data dari controller, fallback jika kosong
-    @php
-        $dataWisata = $wisatas->isNotEmpty() ? $wisatas : collect([
-            ['nama' => 'Pantai Biru', 'harga_tiket' => 15000],
-            ['nama' => 'Air Terjun Indah', 'harga_tiket' => 25000],
-            ['nama' => 'Gunung Rindu', 'harga_tiket' => 50000],
-            ['nama' => 'Hutan Pelangi', 'harga_tiket' => 18000],
-        ]);
-    @endphp
-
-    const wisataData = @json($dataWisata);
+    const wisataData = @json($wisatas);
 
     const labels1 = wisataData.map(w => w.nama);
     const harga = wisataData.map(w => w.harga_tiket);
@@ -89,16 +79,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     text: 'Harga Tiket Wisata',
                     color: '#1e293b',
                     font: { size: 14, weight: 'bold' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Rp ' + context.raw.toLocaleString('id-ID');
+                        }
+                    }
                 }
             },
-            animation: {
-                duration: 1200,
-                easing: 'easeOutBounce'
-            },
+            animation: { duration: 1200, easing: 'easeOutBounce' },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: '#1e293b', callback: v => 'Rp ' + v.toLocaleString('id-ID') },
+                    ticks: { color: '#1e293b' },
                     grid: { color: 'rgba(0,0,0,0.05)' }
                 },
                 x: {
@@ -148,10 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     font: { size: 14, weight: 'bold' }
                 }
             },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
-            },
+            animation: { duration: 1000, easing: 'easeOutQuart' },
             scales: {
                 y: {
                     beginAtZero: true,
