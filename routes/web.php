@@ -13,10 +13,8 @@ use App\Http\Controllers\PenilaianController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
 | Ini adalah file route utama aplikasi Wisataku.
 | Pastikan semua route mengarah ke controller yang sesuai.
-|
 */
 
 // ==========================
@@ -80,19 +78,25 @@ Route::middleware(['auth'])->controller(PenilaianController::class)->group(funct
 });
 
 // 🔒 Hanya admin yang boleh melihat daftar penilaian penuh
-Route::middleware(['auth', 'isAdmin'])->get('/admin/penilaian', [PenilaianController::class, 'index'])->name('penilaian.index');
+Route::middleware(['auth', 'isAdmin'])->get('/admin/penilaian', 
+    [PenilaianController::class, 'index']
+)->name('penilaian.index');
 
 
 // ==========================
 // 👑 Admin Area (Hanya untuk Admin)
 // ==========================
 Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
+
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
     // CRUD Pengguna
     Route::resource('pengguna', PenggunaController::class);
 
-    // Halaman Grafik
-    Route::get('/grafik', [GrafikController::class, 'index'])->name('grafik.index');
+    // ==========================
+    // 📈 Halaman Grafik (Sesuai folder Admin/Grafik/)
+    // ==========================
+    Route::get('/grafik', [GrafikController::class, 'index'])
+        ->name('grafik.index');
 });

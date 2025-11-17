@@ -18,6 +18,7 @@ class GrafikController extends Controller
         // === Ambil data wisata dari database ===
         $wisatasDB = Wisata::select('nama', 'harga_tiket')->get();
 
+        // Jika DB kosong → gunakan dummy default
         $wisatas = $wisatasDB->isNotEmpty()
             ? $wisatasDB
             : collect([
@@ -29,23 +30,32 @@ class GrafikController extends Controller
                 ['nama' => 'Pantai Indah', 'harga_tiket' => 25000],
             ]);
 
-        // === Daftar tanggal 30 hari terakhir ===
+        // === Generate tanggal 30 hari terakhir ===
         $tanggal = [];
         for ($i = 29; $i >= 0; $i--) {
             $tanggal[] = Carbon::now()->subDays($i)->format('d M');
         }
 
-        // === Simulasi jumlah pengunjung harian ===
+        // === Simulasi jumlah pengunjung 30 hari terakhir ===
         $pengunjung = [];
         for ($i = 29; $i >= 0; $i--) {
             $day = Carbon::now()->subDays($i);
+
             $pengunjung[] = $day->isWeekend()
-                ? rand(120, 180)   // Weekend ramai
-                : rand(60, 130);   // Weekday sedang
+                ? rand(120, 180)   // weekend ramai
+                : rand(60, 130);   // weekday stabil
         }
 
-        // === Kirim data ke view sebagai array ===
-        return view('Grafik.index', [
+        // === Kirim ke view ===
+        return view('Admin.grafik.index', [
+            'wisatas'    => $wisatas->toArray(),
+            'tanggal'    => $tanggal,
+            'pengunjung' => $pengunjung,
+        ]);
+        
+        
+        // === Kirim ke view ===
+        return view('Admin.grafik.grafik', [
             'wisatas'    => $wisatas->toArray(),
             'tanggal'    => $tanggal,
             'pengunjung' => $pengunjung,

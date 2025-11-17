@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    {{-- Grafik --}}
+    {{-- Grafik 
     <div class="row mt-5">
       <div class="col-12">
         <div class="card glass-card p-3 fade-up">
@@ -53,7 +53,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> --}}
 
     {{-- Data Terbaru --}}
     <div class="row mt-5">
