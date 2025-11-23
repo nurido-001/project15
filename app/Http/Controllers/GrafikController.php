@@ -2,63 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Administrator;
 use App\Models\Wisata;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB; // Menggunakan DB facade untuk contoh log kunjungan
 
 class GrafikController extends Controller
 {
     /**
-     * Tampilkan grafik statistik wisata & pengunjung.
-     * Route: GET /admin/grafik
-     * Middleware: auth, isAdmin
+     * Menampilkan dashboard dengan dua jenis grafik.
+     * Grafik Batang: Jumlah data di sistem (User, Admin, Wisata).
+     * Grafik Garis: Data pengunjung 30 hari terakhir (menggunakan dummy data).
+     *
+     * @return \Illuminate\View\View
      */
     public function index()
     {
-        // === Ambil data wisata dari database ===
-        $wisatasDB = Wisata::select('nama', 'harga_tiket')->get();
+        // 1. Grafik Batang: Jumlah Data (Menggunakan data nyata dari Models)
+        $jumlahPengguna = User::count();
+        $jumlahAdmin = Administrator::count();
+        $jumlahWisata = Wisata::count();
 
-        // Jika DB kosong → gunakan dummy default
-        $wisatas = $wisatasDB->isNotEmpty()
-            ? $wisatasDB
-            : collect([
-                ['nama' => 'Tembok Besar Cina', 'harga_tiket' => 700000],
-                ['nama' => 'Gunung Bromo', 'harga_tiket' => 600000],
-                ['nama' => 'Pura Ulun Danu Beratan', 'harga_tiket' => 450000],
-                ['nama' => 'Sydney Opera House', 'harga_tiket' => 650000],
-                ['nama' => 'Patung Liberty', 'harga_tiket' => 500000],
-                ['nama' => 'Pantai Indah', 'harga_tiket' => 25000],
-            ]);
+        // Label dan Data untuk Grafik Batang (Jumlah Data)
+        $labels = ['Pengguna', 'Administrator', 'Wisata'];
+        $data = [$jumlahPengguna, $jumlahAdmin, $jumlahWisata];
 
-        // === Generate tanggal 30 hari terakhir ===
+        // 2. Grafik Garis: Dummy Data Pengunjung 30 Hari (untuk menampilkan data yang pasti ada)
         $tanggal = [];
-        for ($i = 29; $i >= 0; $i--) {
-            $tanggal[] = Carbon::now()->subDays($i)->format('d M');
-        }
-
-        // === Simulasi jumlah pengunjung 30 hari terakhir ===
         $pengunjung = [];
-        for ($i = 29; $i >= 0; $i--) {
-            $day = Carbon::now()->subDays($i);
 
-            $pengunjung[] = $day->isWeekend()
-                ? rand(120, 180)   // weekend ramai
-                : rand(60, 130);   // weekday stabil
+        // Loop untuk 30 hari ke belakang (dari 29 hari yang lalu sampai hari ini)
+        for ($i = 29; $i >= 0; $i--) {
+            // Label untuk sumbu X (misalnya: 23 Nov)
+            $tanggal[] = Carbon::now()->subDays($i)->format('d M');
+            
+            // Dummy data pengunjung per hari (antara 50 sampai 200)
+            $pengunjung[] = rand(50, 200); 
         }
 
-        // === Kirim ke view ===
-        return view('Admin.grafik.index', [
-            'wisatas'    => $wisatas->toArray(),
-            'tanggal'    => $tanggal,
-            'pengunjung' => $pengunjung,
-        ]);
-        
-        
-        // === Kirim ke view ===
-        return view('Admin.grafik.grafik', [
-            'wisatas'    => $wisatas->toArray(),
-            'tanggal'    => $tanggal,
-            'pengunjung' => $pengunjung,
-        ]);
+        // Meneruskan semua data yang diperlukan ke view
+        return view('Admin.grafik.grafik', compact(
+            'labels', 'data', 'tanggal', 'pengunjung'
+        ));
     }
 }

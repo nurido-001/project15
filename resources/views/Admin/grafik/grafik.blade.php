@@ -1,156 +1,265 @@
+Baik\! Ini adalah tantangan yang menarik. Saya akan membuat skema warna yang kaya dengan kombinasi Kuning, Biru Muda & Tua, Hijau Muda & Sedang, serta Biru Telur Asin.
 
+Saya akan menerapkan warna-warna ini pada:
+
+  * Warna garis dan area grafik pengunjung.
+  * Warna batang pada grafik data sistem.
+  * Warna latar belakang card agar sesuai.
+  * Warna teks judul.
+
+Saya juga akan tetap mempertahankan pengaturan tinggi grafik yang lebih panjang dan pemotongan data untuk 15 hari terakhir pada grafik pengunjung.
+
+Berikut adalah seluruh kode lengkapnya:
+
+````html
 @extends('layouts.app')
 
-@section('title', 'Grafik Pengguna & Admin')
+@section('title', 'Grafik Statistik')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4 text-center text-primary animate__animated animate__fadeInDown">
-        🌊 Grafik Aktivitas Admin & Pengguna Bulan Ini
-    </h4>
+<div class="container mt-4">
+    
+    <h1 class="text-center mb-5" style="color: #3f51b5; font-weight: 700;">
+        ✨ Statistik WisataKu - Wawasan Data
+    </h1>
+    
+    <h2 class="text-center mb-3" style="color: #FFC107;">
+        📈 Tren Kunjungan Harian 15 Hari Terakhir
+    </h2>
 
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden" 
-         style="background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #e0f7fa; position: relative;">
-        <div class="card-body position-relative">
-            <p class="text-light mb-4 text-center animate__animated animate__fadeIn">
-                Jumlah akun <b>Admin</b> dan <b>Pengguna</b> dalam <b>30 hari terakhir</b>.
-                <br><small class="text-secondary">Area dengan cahaya cyan lembut menandakan akhir pekan (Sabtu & Minggu).</small>
-            </p>
+    <div class="card shadow-lg p-4 mb-5 border-0"
+        style="background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); /* Latar belakang kuning muda */
+                border-radius: 25px;
+                transition: transform 0.3s ease-in-out;"
+        onmouseover="this.style.transform='translateY(-5px)'"
+        onmouseout="this.style.transform='translateY(0)'">
+        
+        <canvas id="visitorChart" height="180"></canvas>
+    </div>
 
-            <div id="grafik-pengguna" style="height: 420px; z-index: 2; position: relative;"></div>
+    <h2 class="text-center mb-3 mt-5" style="color: #4CAF50;">
+        📊 Komposisi Data Utama Sistem
+    </h2>
 
-            <!-- Efek Gelombang di Bawah Grafik -->
-            <div class="wave-bg">
-                <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
-                    <path fill="rgba(0,255,255,0.08)">
-                        <animate attributeName="d" dur="10s" repeatCount="indefinite"
-                            values="
-                            M0,160 C360,260 1080,60 1440,160 L1440,320 L0,320 Z;
-                            M0,180 C360,120 1080,300 1440,180 L1440,320 L0,320 Z;
-                            M0,160 C360,260 1080,60 1440,160 L1440,320 L0,320 Z
-                            " />
-                    </path>
-                </svg>
-            </div>
-        </div>
+    <div class="card shadow-lg p-4 border-0"
+        style="background: linear-gradient(135deg, #e0f2f7 0%, #b3e5fc 100%); /* Latar belakang biru muda */
+                border-radius: 25px;
+                transition: transform 0.3s ease-in-out;"
+        onmouseover="this.style.transform='translateY(-5px)'"
+        onmouseout="this.style.transform='translateY(0)'">
+        
+        <canvas id="systemDataChart" height="180"></canvas>
     </div>
 </div>
-
-<style>
-.wave-bg {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 120px;
-    overflow: hidden;
-    z-index: 1;
-    opacity: 0.9;
-}
-</style>
 @endsection
 
 @push('scripts')
-<!-- Animate.css -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-<!-- ApexCharts -->
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const labels = @json($labels ?? []);
-    const dataPengguna = @json($dataPengguna ?? []);
-    const dataAdmin = @json($dataAdmin ?? []);
+document.addEventListener("DOMContentLoaded", function () {
+    
+    // --- SKEMA WARNA BARU: Kuning, Biru Muda & Tua, Hijau Muda & Sedang, Biru Telur Asin ---
+    const colorYellow = '#FFEB3B';       // Kuning cerah
+    const colorLightBlue = '#2196F3';    // Biru Muda (standar)
+    const colorDarkBlue = '#3F51B5';     // Biru Tua (indigo)
+    const colorLightGreen = '#8BC34A';   // Hijau Muda (lime green)
+    const colorMediumGreen = '#4CAF50';  // Hijau Sedang (standard green)
+    const colorTeal = '#00BCD4';         // Biru Telur Asin (Cyan)
 
-    const weekendRegions = labels.map((tanggal, i) => {
-        const day = new Date(tanggal).getDay();
-        if (day === 0 || day === 6) {
-            return {
-                x: tanggal,
-                borderColor: 'rgba(0,255,255,0.3)',
-                fillColor: 'rgba(0,255,255,0.08)',
-                label: { text: day === 6 ? 'Sabtu' : 'Minggu', style: { color: '#00FFFF', background: 'transparent' } }
-            };
+    // --- 1. Konfigurasi Grafik Garis (Pengunjung 15 Hari Terakhir) ---
+    const ctxVisitor = document.getElementById('visitorChart').getContext('2d');
+    
+    // Data yang diambil dari Controller
+    let tanggalData = @json($tanggal);
+    let pengunjungData = @json($pengunjung);
+    
+    // Operasi Pemotongan Data (Mengambil 15 Data Terakhir)
+    const limit = 15;
+    tanggalData = tanggalData.slice(-limit); 
+    pengunjungData = pengunjungData.slice(-limit); 
+    // Data sekarang hanya berisi 15 hari terakhir.
+
+    // Gradien untuk area di bawah garis (Menggunakan warna Kuning)
+    const gradientVisitor = ctxVisitor.createLinearGradient(0, 0, 0, 300);
+    gradientVisitor.addColorStop(0, 'rgba(255, 235, 59, 0.4)'); // Kuning cerah, opacity 40%
+    gradientVisitor.addColorStop(1, 'rgba(255, 235, 59, 0)');  // Kuning cerah, transparan
+
+    new Chart(ctxVisitor, {
+        type: 'line',
+        data: {
+            labels: tanggalData,
+            datasets: [{
+                label: 'Jumlah Pengunjung',
+                data: pengunjungData,
+                borderWidth: 4,
+                tension: 0.4,
+                fill: true,
+                backgroundColor: gradientVisitor, 
+                borderColor: colorYellow, // Garis Kuning
+                pointRadius: 6,
+                pointBackgroundColor: colorYellow,
+                pointBorderColor: '#ffffff',
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: colorDarkBlue // Hover Biru Tua
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutQuart'
+            },
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    boxPadding: 5
+                }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah Kunjungan',
+                        font: { size: 14, weight: 'bold' },
+                        color: '#6c757d'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        color: '#495057',
+                        callback: function(value) {
+                            if (value % 1 === 0) {
+                                return value;
+                            }
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tanggal',
+                        font: { size: 14, weight: 'bold' },
+                        color: '#6c757d'
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#495057'
+                    }
+                }
+            }
         }
-        return null;
-    }).filter(Boolean);
+    });
 
-    const options = {
-        chart: {
-            type: 'area',
-            height: 420,
-            foreColor: '#e0f7fa',
-            background: 'transparent',
-            toolbar: { show: false },
-            animations: {
-                enabled: true,
-                easing: 'easeinout',
-                speed: 1300,
-                animateGradually: { enabled: true, delay: 300 },
-                dynamicAnimation: { enabled: true, speed: 700 }
-            }
-        },
-        colors: ['#00E396', '#0090FF'],
-        stroke: { curve: 'smooth', width: 3 },
-        fill: {
-            type: "gradient",
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.7,
-                opacityTo: 0.1,
-                stops: [0, 90, 100]
-            }
-        },
-        grid: { borderColor: 'rgba(255,255,255,0.1)', strokeDashArray: 4 },
-        dataLabels: { enabled: false },
-        markers: {
-            size: 5,
-            colors: ['#00E396', '#0090FF'],
-            strokeWidth: 2,
-            hover: { size: 8 }
-        },
-        series: [
-            { name: 'Pengguna', data: dataPengguna },
-            { name: 'Admin', data: dataAdmin }
-        ],
-        xaxis: {
-            categories: labels,
-            labels: { style: { colors: '#e0f7fa' } },
-            axisTicks: { show: false },
-            axisBorder: { color: 'rgba(255,255,255,0.2)' }
-        },
-        yaxis: {
-            min: 0,
-            labels: { style: { colors: '#e0f7fa' } }
-        },
-        tooltip: {
-            theme: 'dark',
-            y: { formatter: val => val + " akun" },
-            custom: function({ series, seriesIndex, dataPointIndex, w }) {
-                const day = w.globals.labels[dataPointIndex];
-                const val = series[seriesIndex][dataPointIndex];
-                const role = w.globals.seriesNames[seriesIndex];
-                const message = (val > 3) ? "📈 Lonjakan aktivitas!" : "📉 Hari tenang";
-                return `
-                    <div style="padding:8px 12px; background:rgba(15,32,39,0.95); border-radius:8px;">
-                        <b>${day}</b><br>
-                        <span style="color:${seriesIndex === 0 ? '#00E396' : '#0090FF'}">${role}</span>: ${val} akun<br>
-                        <small>${message}</small>
-                    </div>
-                `;
-            }
-        },
-        annotations: { xaxis: weekendRegions },
-        legend: {
-            position: 'top',
-            horizontalAlign: 'center',
-            labels: { colors: '#e0f7fa' },
-            markers: { radius: 12 }
-        },
-        responsive: [{ breakpoint: 768, options: { chart: { height: 300 } } }]
-    };
+    // --- 2. Konfigurasi Grafik Batang (Jumlah Data Sistem) ---
+    const ctxSystem = document.getElementById('systemDataChart').getContext('2d');
+    
+    // Data yang diambil dari Controller
+    const systemLabels = @json($labels); 
+    const systemData = @json($data);
 
-    const chart = new ApexCharts(document.querySelector("#grafik-pengguna"), options);
-    chart.render();
+    // SKEMA WARNA BARU untuk batang: Pengguna, Administrator, Wisata
+    const barColors = [
+        colorLightBlue,   // Pengguna: Biru Muda
+        colorMediumGreen, // Administrator: Hijau Sedang
+        colorTeal         // Wisata: Biru Telur Asin
+    ];
+
+    new Chart(ctxSystem, {
+        type: 'bar',
+        data: {
+            labels: systemLabels,
+            datasets: [{
+                label: 'Total Entitas',
+                data: systemData,
+                backgroundColor: barColors.map(color => color + 'A0'), // Opacity 60%
+                borderColor: barColors,
+                borderWidth: 2,
+                borderRadius: 8,
+                barPercentage: 0.7,
+                categoryPercentage: 0.8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutQuart',
+            },
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    boxPadding: 5
+                },
+                datalabels: {
+                    display: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah Data',
+                        font: { size: 14, weight: 'bold' },
+                        color: '#6c757d'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        color: '#495057',
+                        callback: function(value) {
+                            if (value % 1 === 0) {
+                                return value;
+                            }
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#495057',
+                        font: { weight: 'bold' }
+                    }
+                }
+            }
+        }
+    });
 });
 </script>
 @endpush
