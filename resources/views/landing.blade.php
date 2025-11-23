@@ -229,7 +229,7 @@
     <a href="{{ route('login') }}" class="btn-login">Login</a>
   </nav>
 
-  <!-- Hero Section -->
+
   <section class="hero" id="home">
     <h2>Selamat Datang di</h2>
     <h1><span class="typing"></span></h1>
@@ -304,7 +304,9 @@
       }
     }
     window.onload = typeEffect;
+    
   </script>
+
 
 </body>
 </html>

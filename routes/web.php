@@ -24,33 +24,20 @@ Route::get('/', function () {
     return view('landing'); // Tampilan utama tanpa controller
 })->name('landing');
 
-
-// ==========================
-// 🔐 Autentikasi
-// ==========================
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');
     Route::post('/login', 'login')->name('login.post');
     Route::post('/logout', 'logout')->name('logout');
 });
 
-// Nonaktifkan register (redirect ke login)
 Route::get('/register', fn() => redirect()->route('login'))->name('register');
 
-
-// ==========================
-// 📊 Area Dashboard
-// ==========================
 Route::middleware(['auth'])->controller(HomeController::class)->group(function () {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/home', 'index')->name('home');
     Route::get('/dashboard/cards', 'cards')->name('dashboard.cards');
 });
 
-
-// ==========================
-// 🌄 CRUD Tempat Wisata
-// ==========================
 Route::middleware(['auth'])->group(function () {
     Route::resource('wisata', WisataController::class)
         ->parameters(['wisata' => 'wisata'])

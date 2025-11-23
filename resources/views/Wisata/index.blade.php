@@ -159,6 +159,8 @@
     {{-- Pagination --}}
     <div class="mt-4">
         {{ $wisatas->appends(['search' => request('search')])->links() }}
+
     </div>
 </div>
+
 @endsection
